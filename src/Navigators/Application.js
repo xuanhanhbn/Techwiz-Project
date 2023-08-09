@@ -1,26 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { memo, useEffect } from 'react';
-import { SafeAreaView, StatusBar } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
-import { useSelector, useDispatch } from 'react-redux';
-import { StartupContainer } from '@/Containers';
-import { useTheme } from '@/Hooks';
-import MainNavigator from './Main';
-import { navigationRef } from './utils';
+import React, { memo, useEffect } from "react";
+import { SafeAreaView, StatusBar } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { StartupContainer } from "@/Containers";
+import { useTheme } from "@/Hooks";
+import MainNavigator from "./Main";
+import { navigationRef } from "./utils";
 // import { makeSelectGlobal } from './globalSlice';
 import {
   loginActions,
   makeSelectLogin,
-} from '@/Containers/LoginPage/loginSlice';
-import routes from '@/routes';
-import { isLogin } from './utils';
-import Start from '@/Containers/AdvancedSearch/Start';
-import eventEmitter from '@/utils/eventEmitter';
-import { navigate } from '@/Navigators/utils.js';
-import { useToast } from 'native-base';
-import crashlytics from '@react-native-firebase/crashlytics';
-import analytics from '@react-native-firebase/analytics';
+} from "@/Containers/LoginPage/loginSlice";
+import routes from "@/routes";
+import { isLogin } from "./utils";
+import Start from "@/Containers/AdvancedSearch/Start";
+import eventEmitter from "@/utils/eventEmitter";
+import { navigate } from "@/Navigators/utils.js";
+import { useToast } from "native-base";
+import crashlytics from "@react-native-firebase/crashlytics";
+import analytics from "@react-native-firebase/analytics";
 
 const Stack = createStackNavigator();
 
@@ -64,7 +64,7 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     getLoginData();
-    crashlytics().log('Khởi động app');
+    crashlytics().log("Khởi động app");
     crashlytics().setCrashlyticsCollectionEnabled(true);
     // getStepActiveData()
   }, []);
@@ -77,47 +77,32 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     // Đăng ký lắng nghe sự kiện
-    eventEmitter.on('reset', () => {
+    eventEmitter.on("reset", () => {
       dispatch(loginActions.cleanup());
       toast.closeAll();
       toast.show({
         duration: 2000,
-        placement: 'top',
-        description: 'Phiên đăng nhập đã hết hạn',
+        placement: "top",
+        description: "Phiên đăng nhập đã hết hạn",
       });
     });
     // Gửi sự kiện
     // eventEmitter.emit('eventName', 'Hello, world!');
-    return () => eventEmitter.removeListener('reset');
+    return () => eventEmitter.removeListener("reset");
   }, []);
 
   useEffect(() => {
     if (!loginData) {
-      navigate('Start');
+      navigate("Start");
     }
   }, [loginData]);
 
-  const config = {
-    screens: {
-      NewDetais: {
-        path: 'new-service/title/:id/',
-        parse: {
-          id: id => `${id}`,
-        },
-        stringify: {
-          id: id => id.replace(/^new-details-/, ''),
-        },
-      },
-    },
-  };
-
-  const linking = {
-    prefixes: ['https://star.vn', 'star://'],
-    config,
-  };
-
   const isDisableBack = (name) => {
-    return name === 'LOGIN' || name === 'UPDATE_INFO_ACCOUNT' || name === 'ACTIVE_ACCOUNT';
+    return (
+      name === "LOGIN" ||
+      name === "UPDATE_INFO_ACCOUNT" ||
+      name === "ACTIVE_ACCOUNT"
+    );
   };
 
   const handleUpdateCurrentViewToFireBase = async () => {
@@ -126,7 +111,8 @@ const ApplicationNavigator = () => {
     const currentRouteName = navigationRef?.current?.getCurrentRoute()?.name; // set tên cho màn chuẩn bị chueyenr sang
     // console.log('currentRouteName', currentRouteName);
     routeNameRef.current = currentRouteName;
-    if (previousRouteName !== currentRouteName) { // nếu chuyển màn sẽ gọi để lưu lại thông tin
+    if (previousRouteName !== currentRouteName) {
+      // nếu chuyển màn sẽ gọi để lưu lại thông tin
       await analytics().logScreenView({
         screen_name: currentRouteName,
         screen_class: currentRouteName,
@@ -138,16 +124,16 @@ const ApplicationNavigator = () => {
   return (
     <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
       <NavigationContainer
-        linking={linking}
         theme={NavigationTheme}
         ref={navigationRef}
         onReady={() => {
           // console.log('navigationRef?.current?.getCurrentRoute()', navigationRef?.current?.getCurrentRoute());
-          routeNameRef.current = navigationRef?.current?.getCurrentRoute()?.name;
+          routeNameRef.current =
+            navigationRef?.current?.getCurrentRoute()?.name;
         }}
         onStateChange={() => handleUpdateCurrentViewToFireBase()}
       >
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+        <StatusBar barStyle={darkMode ? "light-content" : "dark-content"} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Startup" component={StartupContainer} />
           {!loginData.access_token && (
@@ -155,8 +141,8 @@ const ApplicationNavigator = () => {
           )}
           <Stack.Screen name="Main" component={MainNavigator} />
           {routes
-            .filter(item => !item.isShowBottom)
-            .map(item => (
+            .filter((item) => !item.isShowBottom)
+            .map((item) => (
               <Stack.Screen
                 name={item.name}
                 key={item.name}
@@ -164,10 +150,10 @@ const ApplicationNavigator = () => {
                 path={item.path}
                 component={item.component}
                 options={{
-                  gestureEnabled: isDisableBack(item.name)  ? false : true, // chặn back lại từ màn đăng nhập
+                  gestureEnabled: isDisableBack(item.name) ? false : true, // chặn back lại từ màn đăng nhập
                 }}
                 initialParams={
-                  item.name === 'LOGIN' ? { type: 'FROM_START' } : null
+                  item.name === "LOGIN" ? { type: "FROM_START" } : null
                 }
               />
             ))}
