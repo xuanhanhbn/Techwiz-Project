@@ -15,7 +15,7 @@ import {
 } from "@/Containers/LoginPage/loginSlice";
 import routes from "@/routes";
 import { isLogin } from "./utils";
-import Start from "@/Containers/AdvancedSearch/Start";
+import Start from "@/Containers/StartApp/index";
 import eventEmitter from "@/utils/eventEmitter";
 import { navigate } from "@/Navigators/utils.js";
 import { useToast } from "native-base";
@@ -97,6 +97,28 @@ const ApplicationNavigator = () => {
     }
   }, [loginData]);
 
+<<<<<<< Updated upstream
+=======
+  const config = {
+    screens: {
+      NewDetais: {
+        path: "new-service/title/:id/",
+        parse: {
+          id: (id) => `${id}`,
+        },
+        stringify: {
+          id: (id) => id.replace(/^new-details-/, ""),
+        },
+      },
+    },
+  };
+
+  const linking = {
+    prefixes: ["https://star.vn", "star://"],
+    config,
+  };
+
+>>>>>>> Stashed changes
   const isDisableBack = (name) => {
     return (
       name === "LOGIN" ||
