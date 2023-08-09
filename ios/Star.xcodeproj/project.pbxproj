@@ -349,6 +349,7 @@
 			baseConfigurationReference = 04FCCBD8D500D5522092ADD2 /* Pods-Star.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Star/Star.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -389,6 +390,7 @@
 			baseConfigurationReference = FF96EA5BB683E48F8BD3BF5B /* Pods-Star.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Star/CaarRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
