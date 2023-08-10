@@ -1,20 +1,20 @@
 export const registerAccount = [
   {
-    field: 'name',
-    name: 'Tên đăng nhập',
-    placeholder: 'Nhập tên đăng nhập',
+    field: "email",
+    name: "Email Address*",
+    placeholder: "Enter your Email",
   },
 
   {
-    field: 'password',
-    name: 'Mật khẩu',
-    placeholder: 'Nhập mật khẩu',
-    type: 'password',
+    field: "password",
+    name: "Password",
+    placeholder: "Password",
+    type: "password",
   },
   {
-    field: 'confirmPassword',
-    name: 'Nhập lại mật khẩu',
-    placeholder: 'Nhập lại mật khẩu',
-    type: 'rePassword',
+    field: "confirmPassword",
+    name: "Re Password",
+    placeholder: "Re Password",
+    type: "rePassword",
   },
 ];

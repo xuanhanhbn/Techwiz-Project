@@ -9,12 +9,8 @@ import {
   TouchableOpacity,
   Pressable,
   Dimensions,
-  Image,
-  Platform,
 } from "react-native";
-// import { useToast } from 'native-base';
 import { useDispatch, useSelector } from "react-redux";
-// import { useTranslation } from 'react-i18next';
 import { useTheme } from "@/Hooks";
 import { useForm, Controller } from "react-hook-form";
 import IconFeather from "react-native-vector-icons/Feather";
@@ -24,22 +20,9 @@ import { loginActions, makeSelectLogin } from "../loginSlice";
 import { loginSchema } from "../constants";
 import styles from "../style";
 import { useNavigation } from "@react-navigation/native";
-import FaceIDIcon from "../images/face-id.png";
-import TouchIDIcon from "../images/touch_id.png";
 import ReactNativeBiometrics, { BiometryTypes } from "react-native-biometrics";
-// import FlashMessage, { showMessage } from 'react-native-flash-message';
 import EncryptedStorage from "react-native-encrypted-storage";
-import { LoginManager, AccessToken } from "react-native-fbsdk-next";
-// import { getUniqueId } from 'react-native-device-info';
-// import * as Keychain from 'react-native-keychain';
-// import statusCodes along with GoogleSignin
-import {
-  GoogleSignin,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
-import { appleAuth } from "@invertase/react-native-apple-authentication";
 import analytics from "@react-native-firebase/analytics";
-// import notifee from '@notifee/react-native';
 
 const LoginModal = (props) => {
   // const { t } = useTranslation();
@@ -157,48 +140,6 @@ const LoginModal = (props) => {
     return "";
   };
 
-  const getIconBio = () => {
-    if (getSupportedBiometryType() === "FaceID") {
-      return FaceIDIcon;
-    }
-    return TouchIDIcon;
-  };
-
-  const handleLoginWithBiometric = async () => {
-    // debugger;
-    try {
-      const isExist = await getBiometricKeysExist();
-      if (isExist) {
-        const { success, signature } = await rnBiometrics.createSignature({
-          promptMessage: "Đăng nhập",
-          payload: "",
-        });
-        if (success) {
-          const formData = new FormData();
-          formData.append("username", lastUserLogin?.username);
-          formData.append("password", signature);
-          formData.append("grant_type", "password");
-          formData.append("scope", "read");
-          loginWithBiometricsFunction(formData);
-          return analytics().logLogin({ method: "Biometric" });
-        }
-        return showMessage({
-          message: "Xác thực không thành công",
-          type: "danger",
-        });
-      }
-      return showMessage({
-        message: "Vui đăng nhập và đăng ký sử dụng tính năng này",
-        type: "warning",
-      });
-    } catch (error) {
-      return showMessage({
-        message: "Có lỗi xảy ra trong quá trình thực hiện",
-        type: "danger",
-      });
-    }
-  };
-
   const handleRemoveLastLogin = () => {
     setLastUserLogin(null);
     setValue("username", "");
@@ -229,179 +170,30 @@ const LoginModal = (props) => {
       return (
         <View style={{ ...styles.borderBottom, ...styles.boxUserName }}>
           <Text style={[styles.title, { color: Colors.black }]}>
-            Chào mừng bạn,{" "}
+            Welcome,{" "}
             <Text style={[styles.title, { color: Colors.primary }]}>
               {lastUserLogin.displayName}
             </Text>
           </Text>
           <TouchableOpacity onPress={() => handleRemoveLastLogin()}>
             <View>
-              <Text style={styles.changeAccount}>Đăng nhập dưới tên khác</Text>
+              <Text style={styles.changeAccount}>
+                Log in under a different name
+              </Text>
             </View>
           </TouchableOpacity>
           {/* {errorMessage && <Text style={styles.textError}>{errorMessage}</Text>} */}
         </View>
       );
     }
-    return (
-      <View style={styles.borderBottom}>
-        <Text style={[styles.title, { color: Colors.black }]}>
-          Chào mừng đến với Star
-        </Text>
-        {/* {errorMessage && <Text style={styles.textError}>{errorMessage}</Text>} */}
-      </View>
-    );
-  };
-
-  const handleLoginWithFacebook = async () => {
-    // console.log('handleLoginWithFacebook');
-    if (!isOpenGoogle) {
-      setIsOpenFacebook(true);
-      try {
-        await LoginManager.logOut();
-        LoginManager.logInWithPermissions().then(
-          async (result) => {
-            setIsOpenFacebook(false);
-            if (!result.isCancelled) {
-              const data = await AccessToken.getCurrentAccessToken();
-              // console.log('data', data);
-              if (data?.accessToken) {
-                return loginWithSocial(data, "Facebook");
-              }
-              return showMessage({
-                message: "Có lỗi xảy ra trong quá trình thực hiện",
-                type: "danger",
-              });
-            }
-            return showMessage({
-              message: "Đăng nhập không thành công",
-              type: "danger",
-            });
-          },
-          (error) => {
-            // console.log('error', error);
-            setIsOpenFacebook(false);
-            if (error.code === "EUNSPECIFIED") {
-              return showMessage({
-                message: "Mất kết nối, xin vui lòng thử lại sau",
-                type: "danger",
-              });
-            }
-            return showMessage({
-              message: "Có lỗi xảy ra trong quá trình thực hiện",
-              type: "danger",
-            });
-          }
-        );
-      } catch (error) {
-        // console.log('error', error);
-        setIsOpenFacebook(false);
-        return showMessage({
-          message: "Đăng nhập không thành công",
-          type: "danger",
-        });
-      }
-    }
-  };
-
-  const handleLoginWithApple = async () => {
-    try {
-      const appleAuthRequestResponse = await appleAuth.performRequest({
-        requestedOperation: appleAuth.Operation.LOGIN,
-        // Note: it appears putting FULL_NAME first is important, see issue #293
-        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-      });
-      // console.log('appleAuthRequestResponse', appleAuthRequestResponse);
-      const credentialState = await appleAuth.getCredentialStateForUser(
-        appleAuthRequestResponse.user
-      );
-      // console.log('appleAuthRequestResponse', appleAuthRequestResponse);
-      // console.log('credentialState', credentialState);
-      // console.log('credentialState === appleAuth.State.AUTHORIZED',);
-      if (
-        appleAuthRequestResponse?.fullName?.familyName ||
-        appleAuthRequestResponse?.fullName?.givenName
-      ) {
-        // lưu lại thông tin người dùng khi đăng nhập bằng apple
-        await EncryptedStorage.setItem(
-          "loginWithAppleData",
-          JSON.stringify(appleAuthRequestResponse)
-        );
-      }
-      if (credentialState === appleAuth.State.AUTHORIZED) {
-        if (
-          appleAuthRequestResponse?.fullName?.familyName ||
-          appleAuthRequestResponse?.fullName?.givenName
-        ) {
-          const displayName = `${
-            appleAuthRequestResponse?.fullName?.familyName || ""
-          } ${appleAuthRequestResponse?.fullName?.givenName || ""}`;
-          return loginWithSocial(
-            appleAuthRequestResponse,
-            "Apple",
-            displayName
-          );
-        }
-        // lấy tên từ storage , vì login lại từ lần thứ 2 apple sẽ ko trả ra tên
-        // xử lý cho trường hợp lần đầu call api cập nhật thông tin người dùng lỗi
-        const dataStorage =
-          (await EncryptedStorage.getItem("loginWithAppleData")) || "{}";
-        const dataParsed = JSON.parse(dataStorage);
-        // console.log('dataParsed', dataParsed);
-        const displayName = `${dataParsed?.fullName?.familyName || ""} ${
-          dataParsed?.fullName?.givenName || ""
-        }`;
-        return loginWithSocial(appleAuthRequestResponse, "Apple", displayName);
-      }
-    } catch (error) {
-      // console.log('error', error);
-      return showMessage({
-        message: "Đăng nhập không thành công",
-        type: "danger",
-      });
-    }
-  };
-
-  const handleLoginWithGoogle = async () => {
-    if (!isOpenFacebook) {
-      setIsOpenGoogle(true);
-      try {
-        await GoogleSignin.signOut();
-        await GoogleSignin.signIn();
-        const userInfo = await GoogleSignin.getTokens();
-        setIsOpenGoogle(false);
-        if (userInfo?.accessToken) {
-          return loginWithSocial(userInfo, "Google");
-        } else {
-          return showMessage({
-            message: "Có lỗi xảy ra trong quá trình thực hiện",
-            type: "danger",
-          });
-        }
-      } catch (error) {
-        console.log(error);
-        setIsOpenGoogle(false);
-        if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-          // play services not available or outdated
-          return showMessage({
-            message:
-              "Dịch bụ không có sẵn , vui lòng cập nhật hệ điều hành để sử dụng",
-            type: "danger",
-          });
-        } else if (error.code === "7") {
-          return showMessage({
-            message: "Mất kết nối, xin vui lòng thử lại sau",
-            type: "danger",
-          });
-        } else {
-          // some other error happened
-          return showMessage({
-            message: "Đăng nhập không thành công",
-            type: "danger",
-          });
-        }
-      }
-    }
+    // return (
+    //   <View style={styles.borderBottom}>
+    //     <Text style={[styles.title, { color: Colors.black }]}>
+    //       Welcome to Stream Master
+    //     </Text>
+    //     {/* {errorMessage && <Text style={styles.textError}>{errorMessage}</Text>} */}
+    //   </View>
+    // );
   };
 
   return (
@@ -412,21 +204,21 @@ const LoginModal = (props) => {
           {/* {errorMessage && <Text style={styles.textError}>{errorMessage}</Text>} */}
           {!lastUserLogin?.username && (
             <View>
-              <Text style={[styles.label, { color: Colors.black }]}>
-                Tên đăng nhập
-              </Text>
+              {/* <Text style={[styles.label, { color: Colors.black }]}>
+                UserName/Email
+              </Text> */}
               <View style={styles.inputContainer}>
                 <Controller
                   control={control}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={[styles.input, { color: Colors.gray }]}
+                      style={[styles.input, { color: "#fff" }]}
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
                       autoCapitalize="none"
-                      placeholder="Nhập tên đăng nhập"
-                      placeholderTextColor={Colors.gray}
+                      placeholder="UserName/Email"
+                      placeholderTextColor="#fff"
                       onSubmitEditing={handleSubmit(onSubmit)}
                     />
                   )}
@@ -439,13 +231,13 @@ const LoginModal = (props) => {
             </View>
           )}
         </View>
-        <View style={[styles.label, styles.flexBox]}>
-          <Text style={{ color: Colors.black }}>Mật khẩu</Text>
+        <View style={[styles.label]}>
+          {/* <Text style={{ color: Colors.black }}>Password</Text> */}
           <TouchableOpacity
             style={styles.touchable}
             onPress={() => handleShowModal("forgotPasswordModal")}
           >
-            <Text style={styles.touchableText}>Quên mật khẩu</Text>
+            <Text style={styles.touchableText}>Forgot Password</Text>
             <IconFeather
               name="chevron-right"
               size={18}
@@ -458,14 +250,14 @@ const LoginModal = (props) => {
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={[styles.input, { color: Colors.gray }]}
+                style={[styles.input, { color: "#fff" }]}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
                 secureTextEntry={isShowPassword}
                 autoCapitalize="none"
-                placeholder="Nhập mật khẩu"
-                placeholderTextColor={Colors.gray}
+                placeholder="Password"
+                placeholderTextColor="#fff"
                 onSubmitEditing={handleSubmit(onSubmit)}
               />
             )}
@@ -486,7 +278,7 @@ const LoginModal = (props) => {
 
         <View style={styles.boxButton}>
           <TouchableOpacity
-            style={[styles.touchableBackground, Gutters.middleRMargin]}
+            style={[styles.touchableBackground]}
             onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
           >
@@ -494,66 +286,11 @@ const LoginModal = (props) => {
               <ActivityIndicator size="small" color="#ffffff" />
             ) : (
               <View>
-                <Text style={styles.touchableBackgroundText}>Đăng nhập</Text>
+                <Text style={styles.touchableBackgroundText}>LOGIN</Text>
               </View>
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleLoginWithBiometric()}>
-            <Image style={{ ...styles.faceId }} source={getIconBio()} />
-          </TouchableOpacity>
         </View>
-        <View style={styles.boxHrSocial}>
-          <View style={styles.hr} />
-          <Text style={{ color: Colors.black }}>OR</Text>
-          <View style={styles.hr} />
-        </View>
-        <View style={styles.boxSocial}>
-          <View
-            style={
-              Platform.OS !== "ios"
-                ? { ...styles.boxLeft, width: "50%" }
-                : styles.boxLeft
-            }
-          >
-            <TouchableOpacity onPress={handleLoginWithFacebook}>
-              <View style={styles.boxFacebook}>
-                <IconIonic name="logo-facebook" style={styles.facebookIcon} />
-                <Text style={styles.facebookText}>Facebook</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          {Platform.OS === "ios" && (
-            <View style={styles.boxCenter}>
-              <TouchableOpacity onPress={handleLoginWithApple}>
-                <View style={styles.boxApple}>
-                  <IconIonic name="logo-apple" style={styles.appleIcon} />
-                  <Text style={styles.appleText}>Apple</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-          <View
-            style={
-              Platform.OS !== "ios"
-                ? { ...styles.boxRight, width: "50%" }
-                : styles.boxRight
-            }
-          >
-            <TouchableOpacity onPress={handleLoginWithGoogle}>
-              <View style={styles.boxGoogle}>
-                <IconIonic name="logo-google" style={styles.googleIcon} />
-                <Text style={styles.googleText}>Google</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TouchableOpacity onPress={() => handleRedirectMain()}>
-          <View style={styles.boxContinue}>
-            <Text style={styles.continue}>
-              Tiếp tục sử dụng mà không đăng nhập
-            </Text>
-          </View>
-        </TouchableOpacity>
       </View>
     </View>
   );

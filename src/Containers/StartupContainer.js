@@ -170,7 +170,7 @@ const StartupContainer = () => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#6495ED", "#7495ED"]}
+        colors={["#d64040", "#d64050"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         // locations={[0, 0.5, 1]}

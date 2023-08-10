@@ -25,7 +25,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import DeviceInfo from "react-native-device-info";
 
 const LoginPage = ({ route }) => {
-  const { Fonts, Gutters, Layout } = useTheme();
+  const { Fonts, Gutters, Layout, ColorText } = useTheme();
   // const dispatch = useDispatch();
   const navigation = useNavigation();
   // const loginPageData = useSelector(makeSelectLogin);
@@ -73,22 +73,6 @@ const LoginPage = ({ route }) => {
     [navigation, userInfo]
   );
 
-  // const handleGetUserInfo = async () => {
-  //   const data = await isLogin();
-  //   // nếu accessToken có đồng thời trong store và storage thì mới call appi
-  //   // tránh trường hợp redirect từ logout bị call api này
-  //   // trước khi đẩy từ màn logout sang đây phải clear đi storage
-  //   if (loginData.access_token && data.access_token) {
-  //     dispatch(loginActions.getUserInfo());
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (loginData?.access_token) {
-  //     handleGetUserInfo();
-  //   }
-  // }, [isLoginSuccess]);
-
   const fromScreen = () => route?.params?.type || "";
 
   const { isError, error, refetch } = useQuery({
@@ -130,21 +114,6 @@ const LoginPage = ({ route }) => {
     toast.closeAll();
     toast.show({ description: data?.message });
   };
-
-  // useEffect(() => {
-  //   if (errorMessage) {
-  //     // handleShowToast(errorMessage);
-  //     handleShowMessage({
-  //       message: errorMessage,
-  //       type: "danger",
-  //     });
-  //   }
-  //   dispatch(loginActions.cleanup());
-  // }, [errorMessage]);
-
-  // const onChangeTheme = ({ theme, darkMode }) => {
-  //   dispatch(changeTheme({ theme, darkMode }));
-  // };
 
   const handleShowModal = (modal) => {
     const newShowModal = { ...isShowModal };
@@ -193,142 +162,13 @@ const LoginPage = ({ route }) => {
     }
   );
 
-  const loginWithBiometricsMutation = useMutation(
-    (data) => {
-      return postApiLogin("oauth/token", data, {
-        "Login-Type": "Biometric",
-        "Device-Id": deviceId,
-      });
-    },
-    {
-      onSuccess: async (data, variables, context) => {
-        if (data.data?.access_token) {
-          await EncryptedStorage.setItem(
-            "loginData",
-            JSON.stringify(data.data)
-          );
-          setAccessToken(data.data.access_token);
-          refetch();
-        } else {
-          handleShowMessage({
-            message: "Vui lòng nhập mật khẩu và đăng ký lại",
-            type: "danger",
-          });
-        }
-      },
-      onError: (data) => {
-        handleShowMessage({
-          message: data.message,
-          type: "danger",
-        });
-      },
-    }
-  );
-
-  const loginWithFacebookMutation = useMutation(
-    (data) => {
-      return postApiLogin("oauth/token", data, {
-        "Login-Type": "Facebook",
-        "Device-Id": deviceId,
-      });
-    },
-    {
-      onSuccess: async (data, variables, context) => {
-        if (data.data?.access_token) {
-          await EncryptedStorage.setItem(
-            "loginData",
-            JSON.stringify(data.data)
-          );
-          setAccessToken(data.data.access_token);
-          refetch();
-        } else {
-          handleShowMessage({
-            message: "Vui lòng nhập mật khẩu và đăng ký lại",
-            type: "danger",
-          });
-        }
-      },
-      onError: (data) => {
-        handleShowMessage({
-          message: data.message,
-          type: "danger",
-        });
-      },
-    }
-  );
-
-  const loginWithAppleMutation = useMutation(
-    (data) => {
-      return postApiLogin("oauth/token", data, {
-        "Login-Type": "Apple",
-        "Device-Id": deviceId,
-        "User-Display-Name": data?.displayName || "",
-      });
-    },
-    {
-      onSuccess: async (data, variables, context) => {
-        if (data.data?.access_token) {
-          await EncryptedStorage.setItem(
-            "loginData",
-            JSON.stringify(data.data)
-          );
-          setAccessToken(data.data.access_token);
-          refetch();
-        } else {
-          handleShowMessage({
-            message: "Vui lòng nhập mật khẩu và đăng ký lại",
-            type: "danger",
-          });
-        }
-      },
-      onError: (data) => {
-        handleShowMessage({
-          message: data.message,
-          type: "danger",
-        });
-      },
-    }
-  );
-
-  const loginWithGoogleMutation = useMutation(
-    (data) => {
-      return postApiLogin("oauth/token", data, {
-        "Login-Type": "Google",
-        "Device-Id": deviceId,
-      });
-    },
-    {
-      onSuccess: async (data, variables, context) => {
-        if (data.data?.access_token) {
-          await EncryptedStorage.setItem(
-            "loginData",
-            JSON.stringify(data.data)
-          );
-          setAccessToken(data.data.access_token);
-          refetch();
-        } else {
-          handleShowMessage({
-            message: "Vui lòng nhập mật khẩu và đăng ký lại",
-            type: "danger",
-          });
-        }
-      },
-      onError: (data) => {
-        handleShowMessage({
-          message: data.message,
-          type: "danger",
-        });
-      },
-    }
-  );
-
   return (
     <KeyboardAvoidingView
       style={Layout.fill}
       behavior={Platform.OS === "ios" ? "padding" : null}
     >
       <ImageBackground
-        source={require("@/Components/img/backgroundHome.png")}
+        source={require("@/Components/img/backgroundHome.jpg")}
         resizeMode="cover"
         style={[Layout.fill, styles.wrapper, Gutters.largeBPadding]}
       >
@@ -339,34 +179,28 @@ const LoginPage = ({ route }) => {
             styles.borderBottomHeader,
           ]}
         >
-          <View
-            style={[
-              styles.borderRightHeader,
-              Gutters.smallRPadding,
-              Gutters.smallRMargin,
-            ]}
-          >
-            <Image source={require("@/Components/img/logo.png")} />
+          <View style={[Gutters.smallRPadding, Gutters.smallRMargin]}>
+            <Image
+              style={{ width: 170, height: 90 }}
+              source={require("@/Components/img/logo.png")}
+            />
           </View>
           {isShowModal.loginModal ? (
             <View
               style={[
                 Layout.fill,
-                Layout.rowHCenter,
-                Layout.justifyContentBetween,
+                // Layout.rowCenter,
+                // Layout.justifyContentBetween,
               ]}
             >
-              <Text style={[styles.textWhite, styles.textBold]}>Đăng nhập</Text>
+              {/* <Text style={[styles.textWhite, styles.textBold]}>Login</Text> */}
               <View>
-                <Text style={[styles.textWhite, Gutters.tinyBMargin]}>
-                  Bạn chưa là thành viên?
-                </Text>
                 <TouchableOpacity
                   style={[Layout.rowHCenter, styles.justifyContentEnd]}
                   onPress={() => navigation.push("REGISTER_ACCOUNT")}
                 >
                   <Text style={[styles.textWhite, styles.textBold]}>
-                    Đăng ký ngay
+                    Register
                   </Text>
                   <IconFeather
                     name="chevron-right"
@@ -381,24 +215,22 @@ const LoginPage = ({ route }) => {
               style={[
                 Layout.fill,
                 Layout.rowHCenter,
-                Layout.justifyContentBetween,
+                { justifyContent: "flex-end" },
               ]}
             >
-              <Text style={[styles.textWhite, styles.textBold]}>
-                Quên mật khẩu
-              </Text>
               <TouchableOpacity
                 style={[Layout.rowHCenter]}
                 onPress={() => handleLoginByAnotherEmail()}
               >
                 <View>
                   <Text
-                    style={[styles.textWhite, styles.textBold, Fonts.textRight]}
+                    style={[
+                      styles.textWhite,
+                      styles.textBold,
+                      ColorText.fontWeigth700,
+                    ]}
                   >
-                    Đăng nhập
-                  </Text>
-                  <Text style={[styles.textWhite, styles.textBold]}>
-                    bằng email khác
+                    Login
                   </Text>
                 </View>
                 <IconFeather
@@ -416,10 +248,6 @@ const LoginPage = ({ route }) => {
               showMessage={handleShowMessage}
               handleShowModal={handleShowModal}
               loginMutateFunction={loginMutation}
-              loginWithBiometricsFunction={loginWithBiometricsMutation.mutate}
-              loginWithFacebookFunction={loginWithFacebookMutation.mutate}
-              loginWithAppleFunction={loginWithAppleMutation.mutate}
-              loginWithGoogleFunction={loginWithGoogleMutation.mutate}
             />
           )}
           {isShowModal.forgotPasswordModal && (

@@ -29,13 +29,16 @@ export default function ({ Colors, ...args }) {
         color: "#979797",
       },
       textPrimary: {
-        color: Colors.primary,
+        color: "#d64040",
       },
       colorIcon: {
         color: "#6D6D6D",
       },
       backgroundPrimary: {
-        backgroundColor: "#FC5B00",
+        backgroundColor: "#d64040",
+      },
+      backgroundSecondPrimary: {
+        backgroundColor: "#c53030",
       },
       fontWeight800: {
         fontWeight: "800",

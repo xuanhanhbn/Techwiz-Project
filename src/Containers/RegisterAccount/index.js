@@ -11,45 +11,46 @@ import {
   Platform,
   ActivityIndicator,
   Linking,
-} from 'react-native';
-import React, { memo, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { compose } from 'redux';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
-import { styles } from './style';
-import { registerAccount } from './constant';
-import { useDispatch, useSelector, connect } from 'react-redux';
-import { registerActions, makeSelectLayout } from './registerSlice';
-import IonIcons from 'react-native-vector-icons/Ionicons';
-import { Divider } from '@rneui/base';
-import { useTheme } from '@/Hooks';
-import { useToast } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
+} from "react-native";
+import React, { memo, useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { compose } from "redux";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm, Controller } from "react-hook-form";
+import { styles } from "./style";
+import { registerAccount } from "./constant";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { registerActions, makeSelectLayout } from "./registerSlice";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import { Divider } from "@rneui/base";
+import { useTheme } from "@/Hooks";
+import { useToast } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 // import { loginActions } from '../LoginPage/loginSlice';
-import analytics from '@react-native-firebase/analytics';
+import analytics from "@react-native-firebase/analytics";
 
 const schema = yup.object({
-  name: yup
+  email: yup
     .string()
-    .min(6, 'Tối thiểu 6 kí tự và chỉ được nhập chữ, số')
-    .max(40, 'Tên đăng nhập không quá 40 kí tự')
-    .matches(/^[a-zA-Z0-9]{6,}$/, 'Tối thiểu 6 kí tự và chỉ được nhập chữ, số')
-    .required('Vui lòng nhập Tên đăng nhập'),
+    .matches(
+      /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,
+      "Email isvalid"
+    )
+    .required("Please enter your Email"),
   password: yup
     .string()
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[`~!@#$%^&*()?-_+={}[]|:;""''><,.\/])[A-Za-z\d`~!@#$%^&*()?-_+={}[]|:;""''><,.\/&]{8,}$/,
-      'Mật khẩu tối thiểu 8 kí tự phải bao gồm chữ in hoa, chữ in thường, số và kí tự đặc biệt',
+      "Minimum 8 characters, must include at least one uppercase letter, one lowercase letter, one digit, and one special character"
     )
-    .required('Vui lòng nhập mật khẩu'),
+    .required("Please enter your Email"),
   confirmPassword: yup
     .string()
-    .required('Vui lòng nhập lại mật khẩu')
+    .required("Please re-enter your password")
     .oneOf(
-      [yup.ref('password'), null],
-      'Mật khẩu không trùng khớp, vui lòng nhập lại',
+      [yup.ref("password"), null],
+      "The passwords do not match, please re-enter"
     ),
 });
 
@@ -61,6 +62,7 @@ const RegisterAccount = () => {
     password: true,
     rePassWord: true,
   });
+  const [dataRequest, setDataRequest] = useState({});
   const toast = useToast();
   const navigation = useNavigation();
   const globalData = useSelector(makeSelectLayout);
@@ -77,40 +79,28 @@ const RegisterAccount = () => {
   });
 
   // Xử lý khi ấn submit
-  const onSubmit = data => {
-    dispatch(registerActions.registerAccount(data));
-    analytics().logSignUp({ method: 'Manual' });
+  const onSubmit = (data) => {
+    const newDataRequest = {
+      ...data,
+    };
+    setDataRequest(newDataRequest);
+    // dispatch(registerActions.registerAccount(data));
   };
-
-  // Xử lý khi người dùng click vào 'Điều khoản dịch vụ' hoặc 'bảo mật'
-  const handleConfirm = text => {
-    let url = '';
-    // Điều khoản
-    if (text === 'rules') {
-      url = 'https://star.vn/terms-of-agreement';
-      Linking.openURL(url);
+  useEffect(() => {
+    if (Object.keys(dataRequest).length) {
+      navigation.replace("UPDATE_INFO_ACCOUNT", { dataRequest });
     }
-    // Quy chế
-    if (text === 'regulation') {
-      url = 'https://star.vn/operating-regulations';
-      Linking.openURL(url);
-    }
-    // Chính sách bảo mật
-    if (text === 'privacy') {
-      url = 'https://star.vn/privacy-policy';
-      Linking.openURL(url);
-    }
-  };
+  }, [dataRequest]);
 
   // Xử lý khi người dùng click icon show/hide password
-  const handleShowPasswordIcon = type => {
-    if (type === 'password') {
+  const handleShowPasswordIcon = (type) => {
+    if (type === "password") {
       setIsShowPassWord({
         ...isShowPassWord,
         password: !isShowPassWord.password,
       });
     }
-    if (type === 'rePassword') {
+    if (type === "rePassword") {
       setIsShowPassWord({
         ...isShowPassWord,
         rePassWord: !isShowPassWord.rePassWord,
@@ -119,113 +109,87 @@ const RegisterAccount = () => {
   };
 
   // Xử lý khi người dùng click icon show/hide password
-  const handleShowPassWordInput = item => {
-    if (item.type === 'password') {
+  const handleShowPassWordInput = (item) => {
+    if (item.type === "password") {
       return isShowPassWord.password;
     }
-    if (item.type === 'rePassword') {
+    if (item.type === "rePassword") {
       return isShowPassWord.rePassWord;
     }
     return false;
   };
 
   // Xử lý khi đăng kí thành công thì chuyển form cập nhật
-  useEffect(() => {
-    if (globalData.isSuccess) {
-      dispatch(registerActions.clear());
-      navigation.replace('UPDATE_INFO_ACCOUNT', {
-        dataRegister,
-      });
-      toast.closeAll();
-      toast.show({
-        description: 'Thành công',
-      });
-      reset();
-    }
-  }, [globalData.isSuccess]);
+  // useEffect(() => {
+  //   if (globalData.isSuccess) {
+  //     dispatch(registerActions.clear());
+  //     navigation.replace("UPDATE_INFO_ACCOUNT", {
+  //       dataRegister,
+  //     });
+  //     toast.closeAll();
+  //     toast.show({
+  //       description: "Thành công",
+  //     });
+  //     reset();
+  //   }
+  // }, [globalData.isSuccess]);
 
   // Xử lí check trùng tên đăng nhập
   useEffect(() => {
     const isErrorMessage = globalData.isError;
-    const checkError = globalData.dataError || '';
-    if (isErrorMessage && checkError === 'name') {
+    const checkError = globalData.dataError || "";
+    if (isErrorMessage && checkError === "name") {
       dispatch(registerActions.clear());
-      setError('name', {
-        type: 'name',
-        message: 'Tên đăng nhập đã được sử dụng',
+      setError("name", {
+        type: "name",
+        message: "Tên đăng nhập đã được sử dụng",
       });
     }
 
-    if (isErrorMessage && checkError === 'internet') {
+    if (isErrorMessage && checkError === "internet") {
       dispatch(registerActions.clear());
       toast.closeAll();
       toast.show({
-        description: 'Có lỗi xảy ra, vui lòng kiểm tra kết nối và thử lại',
+        description:
+          "An error occurred, please check your connection and try again",
       });
     }
   }, [globalData.isError]);
 
   const handleChangeLogin = () => {
-    navigation.push('LOGIN');
+    navigation.push("LOGIN");
   };
-
-  const handleRedirectMain = () => navigation.navigate('Main');
 
   return (
     <KeyboardAvoidingView
       style={Layout.fill}
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      behavior={Platform.OS === "ios" ? "padding" : null}
     >
       <ImageBackground
         style={styles.imgBackground}
         resizeMode="cover"
-        source={require('@/Components/img/backgroundHome.png')}
+        source={require("@/Components/img/backgroundHome.jpg")}
       >
         {/* Header */}
         <View>
           <View style={[Layout.rowHCenter]}>
             <Image
-              style={[Gutters.regularVMargin, Gutters.regularHMargin]}
-              source={require('@/Components/img/logo.png')}
+              style={[{ width: 170, height: 90 }]}
+              source={require("@/Components/img/logo.png")}
             />
-            <Divider
-              style={[Gutters.regularVMargin]}
-              orientation="vertical"
-              // width={5}
-              color="white"
-            />
-            <Text
-              style={[
-                Gutters.regularLMargin,
-                ColorText.white,
-                ColorText.fontWeight700,
-                { fontSize: FontSize.small },
-              ]}
-            >
-              Đăng ký
-            </Text>
 
             <View style={styles.rightHeader}>
-              <Text
-                style={[
-                  Gutters.regularLMargin,
-                  ColorText.white,
-                  { fontSize: FontSize.small },
-                ]}
-              >
-                Bạn đã có tài khoản?
-              </Text>
               <TouchableOpacity onPress={() => handleChangeLogin()}>
                 <Text
                   style={[
                     ColorText.white,
-                    Gutters.regularLMargin,
-                    ColorText.fontWeight800,
+                    Gutters.largeLMargin,
+                    ColorText.fontWeight700,
                     { fontSize: FontSize.small },
                   ]}
                 >
-                  Đăng nhập
-                  <IonIcons name="chevron-forward-outline" />
+                  Login
+                  <IonIcons size={16} name="chevron-forward-outline" />
                 </Text>
               </TouchableOpacity>
             </View>
@@ -243,34 +207,11 @@ const RegisterAccount = () => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <View>
-                <View>
-                  <Text
-                    style={[
-                      Fonts.textRegular,
-                      ColorText.fontWeight800,
-                      Gutters.regularBMargin,
-                      { color: Colors.black },
-                    ]}
-                  >
-                    Tạo tài khoản ngay
-                  </Text>
-                </View>
-                {registerAccount.map(item => {
+                {registerAccount.map((item) => {
                   const { field } = item;
                   const message = errors[field] && errors[field].message;
                   return (
                     <View key={field}>
-                      <Text
-                        style={[
-                          ColorText.colorLabels,
-                          ColorText.fontWeight700,
-                          Gutters.smallVMargin,
-                          { fontSize: FontSize.small },
-                        ]}
-                      >
-                        {item.name}
-                      </Text>
-
                       <View style={styles.inputContainer}>
                         <Controller
                           control={control}
@@ -283,18 +224,18 @@ const RegisterAccount = () => {
                                 styles.inputValue,
                                 {
                                   fontSize: FontSize.small,
-                                  color: Colors.gray,
+                                  color: Colors.white,
                                 },
                               ]}
                               placeholder={item.placeholder}
-                              placeholderTextColor={Colors.gray}
+                              placeholderTextColor={Colors.white}
                               secureTextEntry={handleShowPassWordInput(item)}
                             />
                           )}
                           name={item.field}
                         />
 
-                        {item.type === 'password' && (
+                        {item.type === "password" && (
                           <IonIcons
                             style={[
                               styles.iconShowPass,
@@ -302,14 +243,14 @@ const RegisterAccount = () => {
                             ]}
                             name={
                               isShowPassWord.password
-                                ? 'eye-off-outline'
-                                : 'eye-outline'
+                                ? "eye-off-outline"
+                                : "eye-outline"
                             }
                             size={20}
                             onPress={() => handleShowPasswordIcon(item.type)}
                           />
                         )}
-                        {item.type === 'rePassword' && (
+                        {item.type === "rePassword" && (
                           <IonIcons
                             style={[
                               styles.iconShowPass,
@@ -317,8 +258,8 @@ const RegisterAccount = () => {
                             ]}
                             name={
                               isShowPassWord.rePassWord
-                                ? 'eye-off-outline'
-                                : 'eye-outline'
+                                ? "eye-off-outline"
+                                : "eye-outline"
                             }
                             size={20}
                             onPress={() => handleShowPasswordIcon(item.type)}
@@ -328,10 +269,10 @@ const RegisterAccount = () => {
 
                       <Text
                         style={[
-                          ColorText.textDanger,
                           Gutters.tinyVMargin,
                           Gutters.regularHMargin,
-                          { fontSize: FontSize.small },
+                          ColorText.fontWeight700,
+                          { fontSize: FontSize.small, color: "#eee" },
                         ]}
                       >
                         {message}
@@ -354,16 +295,10 @@ const RegisterAccount = () => {
                       { fontSize: FontSize.small },
                     ]}
                   >
-                    Tạo tài khoản
+                    REGISTER
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleRedirectMain()}>
-                  <View style={styles.boxContinue}>
-                    <Text style={styles.continue}>
-                      Tiếp tục sử dụng mà không đăng nhập
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+
                 <View style={[Gutters.regularVPadding, Layout.center]}>
                   <View>
                     <Text
@@ -371,25 +306,26 @@ const RegisterAccount = () => {
                         Layout.textAlignCenter,
                         ColorText.fontWeight500,
                         // ColorText.textDiscription,
-                        { fontSize: FontSize.small, color: Colors.gray },
+                        { fontSize: FontSize.small, color: Colors.white },
                       ]}
                     >
-                      Khi nhấn đăng ký, bạn đồng ý với chúng tôi về{' '}
+                      When you click Register, you agree to our Terms of Service
+                      and Privacy Policy
                     </Text>
                   </View>
-                  <View style={[Layout.rowHCenter]}>
-                    <TouchableOpacity onPress={() => handleConfirm('rules')}>
+                  {/* <View style={[Layout.rowHCenter]}>
+                    <TouchableOpacity onPress={() => handleConfirm("rules")}>
                       <Text
                         style={[
                           ColorText.textPrimary,
                           { fontSize: FontSize.small },
                         ]}
                       >
-                        Điều khoản,{' '}
+                        Điều khoản,{" "}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      onPress={() => handleConfirm('regulation')}
+                      onPress={() => handleConfirm("regulation")}
                     >
                       <Text
                         style={[
@@ -406,10 +342,10 @@ const RegisterAccount = () => {
                         { fontSize: FontSize.small },
                       ]}
                     >
-                      {' '}
-                      &{' '}
+                      {" "}
+                      &{" "}
                     </Text>
-                    <TouchableOpacity onPress={() => handleConfirm('privacy')}>
+                    <TouchableOpacity onPress={() => handleConfirm("privacy")}>
                       <Text
                         style={[
                           ColorText.textPrimary,
@@ -419,7 +355,7 @@ const RegisterAccount = () => {
                         Chính sách bảo mật
                       </Text>
                     </TouchableOpacity>
-                  </View>
+                  </View> */}
                 </View>
               </View>
             </ScrollView>

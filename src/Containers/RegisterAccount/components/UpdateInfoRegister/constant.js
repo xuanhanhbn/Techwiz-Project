@@ -1,23 +1,28 @@
 export const updateInfo = [
   {
-    field: 'email',
-    name: 'Địa chỉ email*',
-    placeholder: 'Nhập email',
+    field: "displayName",
+    name: "Full Name*",
+    placeholder: "Enter your Full Name",
   },
   {
-    field: 'displayName',
-    name: 'Tên người dùng*',
-    placeholder: 'Nhập tên người dùng',
+    field: "city",
+    name: "City*",
+    placeholder: "Enter your City",
   },
   {
-    field: 'phoneNumber',
-    name: 'Số điện thoại*',
-    placeholder: 'Nhập số điện thoại',
+    field: "country",
+    name: "Country*",
+    placeholder: "Enter your Country",
   },
   {
-    field: 'birthday',
-    name: 'Ngày sinh*',
-    type: 'birthday',
-    placeholder: 'Chọn ngày sinh',
+    field: "address",
+    name: "Address*",
+    placeholder: "Enter your Address",
+  },
+  {
+    field: "birthday",
+    name: "BirthDay*",
+    type: "birthday",
+    placeholder: "Choose Birth Day",
   },
 ];

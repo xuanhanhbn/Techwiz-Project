@@ -1,50 +1,48 @@
-import { Colors } from '@/Theme/Variables';
-import { StyleSheet } from 'react-native';
+import { Colors } from "@/Theme/Variables";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   homeContainer: {
     flex: 1,
-    backgroundColor:
-      'linear-gradient(0.57deg, #280E00 0.45%, rgba(43, 14, 0, 0.1) 67.14%)',
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   imgBackground: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   registerContainer: {
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderRadius: 15,
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: "#FFFFFF",
     marginHorizontal: 16,
     marginTop: 60,
   },
   buttonSubmit: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     borderRadius: 8,
   },
 
   iconShowPass: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     padding: 10,
     // top: '30%',
-    backgroundColor: '#FFF7F5',
+    backgroundColor: "transparent",
     color: Colors.primary,
   },
 
   inputContainer: {
-    // backgroundColor: '#FFF7F5',
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: "#333",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderRadius: 8,
     // padding: 10,
   },
   inputValue: {
-    // backgroundColor: '#FFF7F5',
+    backgroundColor: "#333",
     borderRadius: 8,
     height: 50,
     marginHorizontal: 5,
@@ -53,13 +51,13 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative",
   },
 
   rightHeader: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
   },
 });

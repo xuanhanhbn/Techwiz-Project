@@ -1,23 +1,24 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { registerActions } from './registerSlice';
-import { postApi } from './api';
+import { call, put, takeLatest } from "redux-saga/effects";
+import { registerActions } from "./registerSlice";
+import { postApi } from "./api";
 
 function* onRegister(data) {
-  const payload = data.payload || [];
-  const url = 'users/register';
+  const body = { email: data.payload?.email };
+  const url = "/sent-otp";
   try {
-    const response = yield call(postApi, url, payload);
+    const response = yield call(postApi, url, body);
+    console.log("res: ", response);
     if (response && response.data.status === 1) {
       yield put(registerActions.registerAccountSuccess(response.data));
     } else {
       yield put(
         registerActions.registerAccountFailed(
-          response.data.duplidateDetails.fieldError,
-        ),
+          response.data.duplidateDetails.fieldError
+        )
       );
     }
   } catch (error) {
-    yield put(registerActions.registerAccountFailed('internet'));
+    yield put(registerActions.registerAccountFailed("internet"));
   }
 }
 

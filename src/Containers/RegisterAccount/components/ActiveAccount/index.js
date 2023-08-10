@@ -9,42 +9,43 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-} from 'react-native';
-import React, { memo, useEffect } from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import PropTypes from 'prop-types';
-import * as yup from 'yup';
-import IonIcons from 'react-native-vector-icons/Ionicons';
+} from "react-native";
+import React, { memo, useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import PropTypes from "prop-types";
+import * as yup from "yup";
+import IonIcons from "react-native-vector-icons/Ionicons";
 
-import { Controller, useForm } from 'react-hook-form';
-import { compose } from '@reduxjs/toolkit';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { useCountdown, useTheme } from '@/Hooks';
+import { Controller, useForm } from "react-hook-form";
+import { compose } from "@reduxjs/toolkit";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { useCountdown, useTheme } from "@/Hooks";
 
-import { activeAccountActions, makeSelectLayout } from './activeAccountSlice';
-import { styles } from './style';
-import { activeAccountList } from './constant';
-import { useNavigation } from '@react-navigation/native';
-import { Divider, useToast } from 'native-base';
+import { activeAccountActions, makeSelectLayout } from "./activeAccountSlice";
+import { styles } from "./style";
+import { activeAccountList } from "./constant";
+import { useNavigation } from "@react-navigation/native";
+import { Divider, useToast } from "native-base";
 import {
   loginActions,
   makeSelectLogin,
-} from '@/Containers/LoginPage/loginSlice';
+} from "@/Containers/LoginPage/loginSlice";
 
 const schema = yup.object({
-  activeCode: yup.string().required('Vui lòng nhập mã kích hoạt'),
+  activeCode: yup.string().required("Plesae enter your Active Code"),
 });
 
 const ActiveAccount = ({ route }) => {
   const { Gutters, Layout, Fonts, FontSize, ColorText, Border, Colors } =
     useTheme();
-  const { emailUser } = route.params;
+  const { dataRequestUpdate } = route.params;
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const toast = useToast();
   const { countdown, startCountdown, stopCountdown, resetCountdown } =
     useCountdown(60);
+
   const {
     control,
     handleSubmit,
@@ -61,7 +62,7 @@ const ActiveAccount = ({ route }) => {
   }, []);
 
   // Xử lý khi ấn submit
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     dispatch(activeAccountActions.activeAccount(data));
   };
 
@@ -74,20 +75,19 @@ const ActiveAccount = ({ route }) => {
   // Check nếu active thành công thì chuyển đến trang LOGIN
   useEffect(() => {
     if (globalData.isSuccess) {
-
       if (loginData.access_token) {
         dispatch(activeAccountActions.clear());
-        navigation.navigate('Main');
+        navigation.navigate("Main");
         toast.closeAll();
         toast.show({
-          description: 'Thành công',
+          description: "Thành công",
         });
       } else {
         dispatch(activeAccountActions.clear());
-        navigation.navigate('LOGIN');
+        navigation.navigate("LOGIN");
         toast.closeAll();
         toast.show({
-          description: 'Thành công',
+          description: "Thành công",
         });
       }
 
@@ -95,43 +95,51 @@ const ActiveAccount = ({ route }) => {
     }
   }, [globalData.isSuccess]);
 
-  useEffect(() => navigation.addListener('beforeRemove', (event) => {
-    // console.log('aaaaaaa');
-    // trường hợp step active ! === 2 và muốn back lại thì sẽ chặn
-    if (userInfo?.stepActive !== '2' && (event?.data?.action?.type === 'POP' || event?.data?.action?.type === 'GO_BACK')) {
-      event.preventDefault();
-    }
-    return () => {
-    // console.log('bbbbbbb');
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (event) => {
+        // console.log('aaaaaaa');
+        // trường hợp step active ! === 2 và muốn back lại thì sẽ chặn
+        if (
+          userInfo?.stepActive !== "2" &&
+          (event?.data?.action?.type === "POP" ||
+            event?.data?.action?.type === "GO_BACK")
+        ) {
+          event.preventDefault();
+        }
+        return () => {
+          // console.log('bbbbbbb');
 
-      navigation.removeListener('beforeRemove');
-    };
-  }), [navigation, userInfo]);
+          navigation.removeListener("beforeRemove");
+        };
+      }),
+    [navigation, userInfo]
+  );
 
   // Check nếu mã không chính xác thì sẽ báo lỗi
   useEffect(() => {
     const isErrorMessage = globalData.isError;
-    const checkError = globalData.dataError || '';
+    const checkError = globalData.dataError || "";
     if (isErrorMessage) {
       dispatch(activeAccountActions.clear());
-      setError('activeCode', {
-        type: 'activeCode',
-        message: 'Mã kích hoạt không chính xác',
+      setError("activeCode", {
+        type: "activeCode",
+        message: "Mã kích hoạt không chính xác",
       });
     }
-    if (isErrorMessage && checkError === 'Mã kích hoạt đã hết hạn!') {
+    if (isErrorMessage && checkError === "Mã kích hoạt đã hết hạn!") {
       dispatch(activeAccountActions.clear());
-      setError('activeCode', {
-        type: 'activeCode',
-        message: 'Mã kích hoạt đã hết hạn!',
+      setError("activeCode", {
+        type: "activeCode",
+        message: "Mã kích hoạt đã hết hạn!",
       });
     }
 
-    if (isErrorMessage && checkError === 'internet') {
+    if (isErrorMessage && checkError === "internet") {
       dispatch(activeAccountActions.clear());
       toast.closeAll();
       toast.show({
-        description: 'Có lỗi xảy ra, vui lòng kiểm tra kết nối và thử lại',
+        description: "Có lỗi xảy ra, vui lòng kiểm tra kết nối và thử lại",
       });
     }
   }, [globalData.isError]);
@@ -140,8 +148,8 @@ const ActiveAccount = ({ route }) => {
   const handleRedirectChangeLogin = () => {
     dispatch(loginActions.cleanup());
     setTimeout(() => {
-      navigation.replace('LOGIN', {
-        type: 'ACTIVE_ACCOUNT',
+      navigation.replace("LOGIN", {
+        type: "ACTIVE_ACCOUNT",
       });
     }, 500);
   };
@@ -163,58 +171,33 @@ const ActiveAccount = ({ route }) => {
   return (
     <KeyboardAvoidingView
       style={Layout.fill}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ImageBackground
         style={styles.imgBackground}
         resizeMode="cover"
-        source={require('@/Components/img/backgroundHome.png')}
+        source={require("@/Components/img/backgroundHome.jpg")}
       >
         {/* Header */}
         <View>
           <View style={[Layout.rowHCenter]}>
             <Image
-              style={[Gutters.regularVMargin, Gutters.regularHMargin]}
-              source={require('@/Components/img/logo.png')}
+              style={[{ width: 170, height: 90 }]}
+              source={require("@/Components/img/logo.png")}
             />
-            <Divider
-              style={[Gutters.regularVMargin]}
-              orientation="vertical"
-              h={10}
-              color="white"
-            />
-            <Text
-              style={[
-                Gutters.regularLMargin,
-                ColorText.white,
-                ColorText.fontWeight700,
-                { fontSize: FontSize.small },
-              ]}
-            >
-              Đăng ký
-            </Text>
 
             <View style={styles.rightHeader}>
-              <Text
-                style={[
-                  Gutters.regularLMargin,
-                  ColorText.white,
-                  { fontSize: FontSize.small },
-                ]}
-              >
-                Bạn đã có tài khoản?
-              </Text>
               <TouchableOpacity onPress={() => handleRedirectChangeLogin()}>
                 <Text
                   style={[
                     ColorText.white,
                     Gutters.regularLMargin,
-                    ColorText.fontWeight800,
+                    ColorText.fontWeight700,
                     { fontSize: FontSize.small },
                   ]}
                 >
-                  Đăng nhập
-                  <IonIcons name="chevron-forward-outline" />
+                  LOGIN
+                  <IonIcons size={16} name="chevron-forward-outline" />
                 </Text>
               </TouchableOpacity>
             </View>
@@ -230,39 +213,22 @@ const ActiveAccount = ({ route }) => {
               <ActivityIndicator size="small" color={Colors.primary} />
             )}
 
-            <Text
-              style={[
-                Fonts.textRegular,
-                ColorText.fontWeight800,
-                { color: Colors.black },
-              ]}
-            >
-              Kích hoạt tài khoản
-            </Text>
             <View style={[Gutters.smallVMargin, Layout.rowHCenter]}>
-              <Text style={{ color: Colors.text }}>
-                Mã kích hoạt đã gửi về email của bạn
+              <Text
+                style={[
+                  ColorText.fontWeight700,
+                  { color: Colors.white, fontSize: FontSize.normal },
+                ]}
+              >
+                The activation code has been sent to your email.
               </Text>
-              {/* <Text style={[Gutters.tinyLMargin, { color: Colors.primary }]}> */}
-              {/* {cutEmail} */}
-              {/* </Text> */}
             </View>
 
-            {activeAccountList.map(item => {
+            {activeAccountList.map((item) => {
               const { field } = item;
               const message = errors[field] && errors[field].message;
               return (
                 <View key={field}>
-                  <Text
-                    style={[
-                      // ColorText.colorLabels,
-                      ColorText.fontWeight700,
-                      Gutters.smallBMargin,
-                      { fontSize: FontSize.small, color: Colors.black },
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
                   <View style={[Layout.row, styles.inputContainer]}>
                     <Controller
                       control={control}
@@ -273,11 +239,10 @@ const ActiveAccount = ({ route }) => {
                           value={value}
                           style={[
                             styles.inputValue,
-                            { fontSize: FontSize.small, color: Colors.gray },
+                            { fontSize: FontSize.small, color: Colors.white },
                           ]}
                           placeholder={item.placeholder}
-                          placeholderTextColor={Colors.gray}
-                        // {...register({item.field})}
+                          placeholderTextColor={Colors.white}
                         />
                       )}
                       name={item.field}
@@ -285,10 +250,10 @@ const ActiveAccount = ({ route }) => {
                   </View>
                   <Text
                     style={[
-                      ColorText.textDanger,
                       Gutters.tinyVMargin,
                       Gutters.regularHMargin,
-                      { fontSize: FontSize.small },
+                      ColorText.fontWeight700,
+                      { fontSize: FontSize.small, color: "#eee" },
                     ]}
                   >
                     {message}
@@ -310,63 +275,9 @@ const ActiveAccount = ({ route }) => {
                   { fontSize: FontSize.small },
                 ]}
               >
-                Kích hoạt
+                ACTIVE
               </Text>
             </TouchableOpacity>
-            <Divider my={3} />
-            <View style={[Layout.rowHCenter]}>
-              {/* {!showReturnCode && ( */}
-              {countdown > 0 ? (
-                <>
-                  <Text
-                    style={[
-                      ColorText.fontWeight500,
-                      { color: Colors.black, fontSize: FontSize.small },
-                    ]}
-                  >
-                    Gửi lại mã sau{' '}
-                  </Text>
-                  <Text
-                    style={[
-                      // Gutters.smallLMargin,
-                      { color: Colors.primary, fontSize: FontSize.small },
-                    ]}
-                  >
-                    {countdown} giây
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text
-                    style={[
-                      ColorText.fontWeight500,
-                      { color: Colors.black, fontSize: FontSize.small },
-                    ]}
-                  >
-                    Chưa nhận được mã?
-                  </Text>
-                  <TouchableOpacity
-                    style={[Layout.rowHCenter]}
-                    onPress={() => handleResendCode()}
-                  >
-                    <Text
-                      style={[
-                        Gutters.smallLMargin,
-                        { color: Colors.primary, fontSize: FontSize.small },
-                      ]}
-                    >
-                      Gửi lại mã
-                    </Text>
-                    <IonIcons
-                      name="chevron-forward-outline"
-                      // size={15}
-                      color={Colors.primary}
-                      style={{ fontSize: FontSize.small }}
-                    />
-                  </TouchableOpacity>
-                </>
-              )}
-            </View>
           </View>
         </View>
       </ImageBackground>

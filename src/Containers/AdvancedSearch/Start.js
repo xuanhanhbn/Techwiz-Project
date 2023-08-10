@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,27 +6,27 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-} from 'react-native';
+} from "react-native";
 // import { useTranslation } from 'react-i18next'
 // import { useTheme } from '@/Hooks';
-import backgroundHome from '@/Components/img/backgroundHome.png';
-import { Colors, FontSize } from '@/Theme/Variables';
+import backgroundHome from "@/Components/img/backgroundHome.jgp";
+import { Colors, FontSize } from "@/Theme/Variables";
 // import { Button, Pressable } from 'native-base';
-import IconIonic from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import { navigateAndSimpleReset } from '@/Navigators/utils';
+import IconIonic from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import { navigateAndSimpleReset } from "@/Navigators/utils";
 
 // const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const height = Dimensions.get("window").height;
 
 const StartupContainer = () => {
   const navigation = useNavigation();
 
-  const handleRedirectLogin = () => navigation.navigate('LOGIN');
+  const handleRedirectLogin = () => navigation.navigate("LOGIN");
 
-  const handleRedirectRegister = () => navigation.navigate('REGISTER_ACCOUNT');
+  const handleRedirectRegister = () => navigation.navigate("REGISTER_ACCOUNT");
 
-  const handleContinue = () => navigateAndSimpleReset('Main');
+  const handleContinue = () => navigateAndSimpleReset("Main");
 
   return (
     <View style={[styles.container]}>
@@ -72,7 +72,7 @@ const StartupContainer = () => {
             <View>
               <TouchableOpacity onPress={() => handleContinue()}>
                 <Text style={styles.continue}>
-                  Tiếp tục mà không đăng nhập{' '}
+                  Tiếp tục mà không đăng nhập{" "}
                   <IconIonic name="chevron-forward-outline" />
                 </Text>
               </TouchableOpacity>
@@ -86,48 +86,48 @@ const StartupContainer = () => {
 
 const styles = StyleSheet.create({
   box: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   bodyBox: {
-    width: '100%',
+    width: "100%",
     bottom: 0,
     paddingBottom: 70,
-    maxWidth: '85%',
+    maxWidth: "85%",
   },
   welcome: {
     fontSize: FontSize.regular,
-    textAlign: 'center',
+    textAlign: "center",
     color: Colors.white,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   header: {
-    width: '100%',
+    width: "100%",
     padding: 10,
   },
   boxButton: {
     box: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       paddingLeft: 15,
       paddingRight: 15,
-      width: '100%',
+      width: "100%",
     },
     button: {
       borderRadius: 8,
-      width: '100%',
+      width: "100%",
       marginTop: 15,
       height: height * 0.06,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
   },
   continue: {
-    textAlign: 'center',
+    textAlign: "center",
     // color: Colors.primary,
     color: Colors.white,
     paddingVertical: 24,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   imageBackground: {
     flex: 1,
-    resizeMode: 'cover', // Chỉnh ảnh nền cho phù hợp với kích thước màn hình
+    resizeMode: "cover", // Chỉnh ảnh nền cho phù hợp với kích thước màn hình
   },
   welcomeText: {
     color: Colors.white,

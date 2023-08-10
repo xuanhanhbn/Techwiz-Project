@@ -10,23 +10,26 @@ import {
 } from "react-native";
 // import { useTranslation } from 'react-i18next'
 // import { useTheme } from '@/Hooks';
-import backgroundHome from "@/Components/img/backgroundHome.png";
+import backgroundHome from "@/Components/img/backgroundHome.jpg";
 import { Colors, FontSize } from "@/Theme/Variables";
 // import { Button, Pressable } from 'native-base';
 import IconIonic from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { navigateAndSimpleReset } from "@/Navigators/utils";
-import { SceneMap, TabView } from "react-native-tab-view";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import FirstScreen from "./components/FirstScreen";
 import TwoScreen from "./components/TwoScreen";
 import ThreeScreen from "./components/ThreeScreen";
+import { useTheme } from "@/Hooks";
+import FourScreen from "./components/FourScreen";
 
 // const width = Dimensions.get('window').width;
 const height = Dimensions.get("window").height;
 
 const StartAppContainer = () => {
   const layout = useWindowDimensions();
-
+  const { Layout, ColorText, Gutters, Border } = useTheme();
+  // console.log("useTheme: ", useTheme());
   const navigation = useNavigation();
 
   const [index, setIndex] = useState(0);
@@ -34,6 +37,7 @@ const StartAppContainer = () => {
     { key: "first", title: "First" },
     { key: "second", title: "Second" },
     { key: "three", title: "Three" },
+    { key: "four", title: "Four" },
   ]);
 
   const handleRedirectLogin = () => navigation.navigate("LOGIN");
@@ -46,7 +50,33 @@ const StartAppContainer = () => {
     first: FirstScreen,
     second: TwoScreen,
     three: ThreeScreen,
+    four: FourScreen,
   });
+
+  const renderTabBar = (props) => {
+    return (
+      <TabBar
+        {...props}
+        renderLabel={() => null}
+        renderIndicator={() => null}
+        indicatorContainerStyle={{
+          backgroundColor: "transparent",
+        }}
+        style={{
+          backgroundColor: "transparent",
+          marginHorizontal: 60,
+        }}
+        renderIcon={({ route, focused, color }) => {
+          return (
+            <IconIonic
+              name={focused ? "ellipse-sharp" : "ellipse-outline"}
+              color="red"
+            />
+          );
+        }}
+      />
+    );
+  };
   return (
     <View style={[styles.container]}>
       <ImageBackground
@@ -54,56 +84,34 @@ const StartAppContainer = () => {
         style={[styles.imageBackground]}
         blurRadius={5}
       >
-        {/* <View style={styles.box}>
-          <View style={styles.bodyBox}>
-            <View style={styles.header}>
-              <Text style={styles.welcome}>Chào mừng đến với Star</Text>
-            </View>
-            <View style={styles.boxButton.box}>
-              <TouchableOpacity
-                onPress={() => handleRedirectLogin()}
-                variant="solid"
-                style={{
-                  backgroundColor: Colors.primary,
-                  ...styles.boxButton.button,
-                }}
-              >
-                <Text style={{ color: Colors.white, fontSize: FontSize.small }}>
-                  Đăng nhập
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleRedirectRegister()}
-                variant="solid"
-                style={{
-                  backgroundColor: Colors.white,
-                  ...styles.boxButton.button,
-                }}
-              >
-                <Text
-                  style={{ color: Colors.primary, fontSize: FontSize.small }}
-                >
-                  Đăng ký
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity onPress={() => handleContinue()}>
-                <Text style={styles.continue}>
-                  Tiếp tục mà không đăng nhập{" "}
-                  <IconIonic name="chevron-forward-outline" />
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View> */}
         <TabView
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
           initialLayout={{ width: layout.width }}
+          renderTabBar={renderTabBar}
+          tabBarPosition="bottom"
         />
+        <View
+          style={[Gutters.smallHPadding, { marginBottom: 30, marginTop: 20 }]}
+        >
+          <TouchableOpacity
+            style={[ColorText.backgroundPrimary, Border.smallRadius]}
+            onPress={() => handleRedirectLogin()}
+          >
+            <Text
+              style={[
+                ColorText.white,
+                Layout.textAlignCenter,
+                Gutters.regularVPadding,
+                FontSize.large,
+                ColorText.fontWeight700,
+              ]}
+            >
+              LOGIN
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ImageBackground>
     </View>
   );

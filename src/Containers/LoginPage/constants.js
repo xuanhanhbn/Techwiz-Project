@@ -1,48 +1,36 @@
-import * as yup from 'yup';
+import * as yup from "yup";
 
 // chứa ít nhất 1 kí tự viết hoa
-yup.addMethod(yup.string, 'containUpperCase', function (message) {
+yup.addMethod(yup.string, "containUpperCase", function (message) {
   return this.matches(/[A-Z]+/, {
     message,
   });
 });
 
 // chứa ít nhất 1 kí tự viết thường
-yup.addMethod(yup.string, 'containLowerCase', function (message) {
+yup.addMethod(yup.string, "containLowerCase", function (message) {
   return this.matches(/[a-z]+/, {
     message,
   });
 });
 
 // chứa ít nhất 1 kí tự đặc biệt
-yup.addMethod(yup.string, 'containSymbol', function (message) {
+yup.addMethod(yup.string, "containSymbol", function (message) {
   return this.matches(/[\W_]+/, {
     message,
   });
 });
 
 // chứa ít nhất 1 số
-yup.addMethod(yup.string, 'containNumber', function (message) {
+yup.addMethod(yup.string, "containNumber", function (message) {
   return this.matches(/\d+/, {
     message,
   });
 });
 
 export const loginSchema = yup.object({
-  username: yup.string().matches(
-    /^\s*[^\W_]{0,40}\s*$/,
-    'Tên đăng nhập chỉ chứa chữ và số'
-  )
-    .max(40, 'Tên đăng nhập không quá 40 kí tự')
-    .required('Vui lòng nhập tên đăng nhập'),
-  password: yup.string()
-  .required('Vui lòng nhập mật khẩu')
-  .matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/,
-    'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 kí tự đặc biệt'
-  )
-    .min(8, 'Mật khẩu tối thiểu 8 kí tự ')
-    .max(32, 'Mật khẩu tối đa 32 kí tự'),
+  username: yup.string().required("Please enter your Username/Email"),
+  password: yup.string().required("Please enter your Password"),
 });
 
 export const confirmEmailSchema = yup.object({
@@ -50,30 +38,33 @@ export const confirmEmailSchema = yup.object({
     .string()
     .matches(
       /^[a-z0-9]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z])?$/,
-      'Email không đúng định dạng'
+      "Email is valid"
     )
-    .required('Vui lòng nhập email'),
+    .required("Please enter your Email"),
 });
 
 export const confirmCodeSchema = yup.object({
   token: yup
     .string()
-    .required('Vui lòng nhập mã xác nhận')
-    .max(50, 'Mã xác nhận tối đa 50 kí tự'),
+    .required("Please enter your code")
+    .max(50, "Code is max 50 characters"),
 });
 
 export const resetPasswordSchema = yup.object({
   newPassword: yup
     .string()
-    .containUpperCase('Mật khẩu phải bắt đầu bằng chữ in hoa')
-    .containLowerCase('Chứa ít nhất 1 ký tự viết thường')
-    .containSymbol('Chứa ít nhất 1 ký tự đặc biệt')
-    .containNumber('Chứa ít nhất 1 ký tự số')
-    .min(8, 'Mật khẩu tối thiểu 8 kí tự ')
-    .max(32, 'Mật khẩu tối đa 32 kí tự')
-    .required('Vui lòng nhập mật khẩu mới'),
+    .containUpperCase("The password must start with an uppercase letter")
+    .containLowerCase("Must contain at least 1 lowercase character")
+    .containSymbol("Must contain at least 1 special character")
+    .containNumber("Must contain at least 1 digit")
+    .min(8, "The password must be at least 8 characters ")
+    .max(32, "The password can be up to 32 characters")
+    .required("Please enter your new password"),
   confirmNewPassword: yup
     .string()
-    .required('Vui lòng nhập lại mật khẩu')
-    .oneOf([yup.ref('newPassword'), null], 'Nhập lại mật khẩu không đúng. Vui lòng nhập lại'),
+    .required("Please enter your password")
+    .oneOf(
+      [yup.ref("newPassword"), null],
+      "The entered password does not match. Please re-enter"
+    ),
 });
