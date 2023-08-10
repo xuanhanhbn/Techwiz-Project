@@ -1,21 +1,8 @@
 import React, { useEffect } from "react";
-import {
-  // ActivityIndicator,
-  View,
-  // Text,
-  // ImageBackground,
-  StyleSheet,
-  // SafeAreaView,
-  Image,
-} from "react-native";
-// import { useTranslation } from 'react-i18next'
-// import { useTheme } from '@/Hooks';
-// import { Brand } from '@/Components'
+import { View, StyleSheet, Image } from "react-native";
 import { setDefaultTheme } from "@/Store/Theme";
 import { navigateAndSimpleReset } from "@/Navigators/utils";
-// import backgroundHome from '@/Components/img/backgroundHome.png';
-// import { Colors, FontSize } from '@/Theme/Variables';
-// import { isLogin } from '@/Navigators/utils';
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   makeSelectLogin,
@@ -26,22 +13,12 @@ import LinearGradient from "react-native-linear-gradient";
 import Logo from "@/Assets/Images/Logo.png";
 import EncryptedStorage from "react-native-encrypted-storage";
 import crashlytics from "@react-native-firebase/crashlytics";
-// import {
-//   getDeviceName,
-//   getSystemVersion,
-//   getManufacturer,
-//   getDeviceType,
-//   getUniqueId,
-// } from 'react-native-device-info';
-// import { userActions } from './User/userSlice';
 
 const StartupContainer = () => {
   // const { Layout, Gutters, Fonts } = useTheme();
   const loginPageData = useSelector(makeSelectLogin);
   const dispatch = useDispatch();
-  // const { t } = useTranslation();
   const { loginData } = loginPageData;
-  // const [stepActive, setStepActive] = useState('');
 
   const handleRedirect = (stepActive) => {
     if (loginData.access_token) {

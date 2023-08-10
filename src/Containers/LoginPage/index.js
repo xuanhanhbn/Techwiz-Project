@@ -39,7 +39,6 @@ const LoginPage = ({ route }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   const toast = useToast();
-  // console.log('sensorAvailable', sensorAvailable);
   const getDeviceId = async () => {
     let uniqueId = await DeviceInfo.getUniqueId();
     setDeviceId(uniqueId);
@@ -47,7 +46,6 @@ const LoginPage = ({ route }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // dispatch(loginActions.cleanup());
       EncryptedStorage.removeItem("loginData");
       getDeviceId();
     }, [])
@@ -254,7 +252,6 @@ const LoginPage = ({ route }) => {
             <ForgotPasswordModal handleShowModal={handleShowModal} />
           )}
         </View>
-        {/* <FlashMessage position="bottom" style={styles.boxFlashMessage} /> */}
       </ImageBackground>
     </KeyboardAvoidingView>
   );

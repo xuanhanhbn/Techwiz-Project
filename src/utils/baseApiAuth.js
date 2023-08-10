@@ -1,18 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
 // import Config from 'react-native-config';
 // import { refreshAccessToken } from './common';
-import {
-  baseApiUrlGateway,
-} from './constants';
+import { baseApiUrlGateway } from "./constants";
 
-const baseApiUrlAuth = `${baseApiUrlGateway}/security-service/`;
+const baseApiUrlAuth = `${baseApiUrlGateway}/`;
 
 const baseInstance = axios.create({
   baseURL: baseApiUrlAuth,
 });
 
 baseInstance.interceptors.request.use(
-  config => {
+  (config) => {
     // const loginData = JSON.parse(sessionStorage.getItem('loginData') || '{}');
     // const roleSet = sessionStorage.getItem('roleSet');
     // if (loginData && loginData.accessToken) {
@@ -34,13 +32,13 @@ baseInstance.interceptors.request.use(
     // config.headers['X-Current-Role'] = roleSet;
     return config;
   },
-  error => Promise.reject(error),
+  (error) => Promise.reject(error)
 );
 
 baseInstance.defaults.timeout = 60000;
 
 baseInstance.interceptors.response.use(
-  response => {
+  (response) => {
     // if (response.headers.authorization) {
     //   sessionStorage.setItem('accessToken', response.headers.authorization);
     // }
@@ -48,7 +46,8 @@ baseInstance.interceptors.response.use(
     // console.log('LOGIN response', response);
     // console.log('====================================');
     return response;
-  }, async error => {
+  },
+  async (error) => {
     // console.log('====================================');
     // console.log('LOGIN error', error);
     // console.log('====================================');
@@ -64,7 +63,7 @@ baseInstance.interceptors.response.use(
     //   }
     // }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default baseInstance;
