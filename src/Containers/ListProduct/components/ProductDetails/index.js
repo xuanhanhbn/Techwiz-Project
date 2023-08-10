@@ -9,6 +9,7 @@ import {
   Image,
   FlatList,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -19,6 +20,7 @@ const DetailsProduct = () => {
   const { Common, Fonts, Gutters, Layout, Colors, ColorText, FontSize } =
     useTheme();
   const dispatch = useDispatch();
+  const widthDimensions = Dimensions.get("window").width;
 
   const refReleased = useRef(null);
 
@@ -35,7 +37,7 @@ const DetailsProduct = () => {
         {/* Banner */}
         <View style={[Layout.colCenter]}>
           <Image
-            style={{ height: 400 }}
+            style={{ height: 300, width: widthDimensions }}
             source={require("@/Components/img/banner.webp")}
           />
         </View>
@@ -93,7 +95,11 @@ const DetailsProduct = () => {
               <ScrollView horizontal ref={refReleased}>
                 <TouchableOpacity onPress={() => handleShowListPackage()}>
                   <Image
-                    style={{ height: 200, width: 150, borderRadius: 8 }}
+                    style={{
+                      height: 200,
+                      width: widthDimensions / 3,
+                      borderRadius: 8,
+                    }}
                     source={require("@/Components/img/banner.webp")}
                   />
                 </TouchableOpacity>
@@ -157,6 +163,30 @@ const DetailsProduct = () => {
                 </TouchableOpacity>
               </View>
             </View>
+          </View>
+
+          <View style={[Gutters.smallTMargin]}>
+            <Text
+              style={[
+                ColorText.white,
+                ColorText.fontWeight500,
+                { fontSize: FontSize.normal },
+              ]}
+            >
+              Danh sách đi kèm
+            </Text>
+            <ScrollView>
+              <TouchableOpacity onPress={() => handleShowListPackage()}>
+                <Image
+                  style={{
+                    height: 200,
+                    width: widthDimensions / 3,
+                    borderRadius: 8,
+                  }}
+                  source={require("@/Components/img/banner.webp")}
+                />
+              </TouchableOpacity>
+            </ScrollView>
           </View>
         </View>
       </View>

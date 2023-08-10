@@ -8,6 +8,7 @@ function* onActive(data) {
   const url = "signup";
   try {
     const response = yield call(postApi, url, payload);
+    console.log("res: ", response);
     if (response && response.data.status === 1) {
       yield put(activeAccountActions.activeAccountSuccess(response.data));
     } else {

@@ -21,14 +21,14 @@ import { useForm, Controller } from "react-hook-form";
 import { styles } from "./style";
 import { registerAccount } from "./constant";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { registerActions, makeSelectLayout } from "./registerSlice";
+import { registerActions, makeSelectRegister } from "./registerSlice";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { Divider } from "@rneui/base";
 import { useTheme } from "@/Hooks";
 import { useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 // import { loginActions } from '../LoginPage/loginSlice';
-import analytics from "@react-native-firebase/analytics";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 const schema = yup.object({
   email: yup
@@ -45,7 +45,7 @@ const schema = yup.object({
       "Minimum 8 characters, must include at least one uppercase letter, one lowercase letter, one digit, and one special character"
     )
     .required("Please enter your Email"),
-  confirmPassword: yup
+  passwordConfirm: yup
     .string()
     .required("Please re-enter your password")
     .oneOf(
@@ -65,7 +65,7 @@ const RegisterAccount = () => {
   const [dataRequest, setDataRequest] = useState({});
   const toast = useToast();
   const navigation = useNavigation();
-  const globalData = useSelector(makeSelectLayout);
+  const globalData = useSelector(makeSelectRegister);
   const dataRegister = globalData.dataRegister || [];
   const { isLoading } = globalData;
   const {
@@ -126,9 +126,9 @@ const RegisterAccount = () => {
       navigation.replace("UPDATE_INFO_ACCOUNT", {
         dataRequest,
       });
-      toast.closeAll();
-      toast.show({
-        description: "Success",
+      showMessage({
+        message: "Success",
+        type: "success",
       });
       reset();
     }
@@ -138,20 +138,12 @@ const RegisterAccount = () => {
   useEffect(() => {
     const isErrorMessage = globalData.isError;
     const checkError = globalData.dataError || "";
-    if (isErrorMessage && checkError === "name") {
-      dispatch(registerActions.clear());
-      setError("name", {
-        type: "name",
-        message: "Tên đăng nhập đã được sử dụng",
-      });
-    }
-
     if (isErrorMessage && checkError === "internet") {
       dispatch(registerActions.clear());
-      toast.closeAll();
-      toast.show({
-        description:
+      showMessage({
+        message:
           "An error occurred, please check your connection and try again",
+        type: "danger",
       });
     }
   }, [globalData.isError]);
@@ -165,6 +157,8 @@ const RegisterAccount = () => {
       style={Layout.fill}
       behavior={Platform.OS === "ios" ? "padding" : null}
     >
+      <FlashMessage position="top" />
+
       <ImageBackground
         style={styles.imgBackground}
         resizeMode="cover"

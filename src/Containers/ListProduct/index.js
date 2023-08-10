@@ -9,6 +9,7 @@ import {
   Image,
   FlatList,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -23,6 +24,7 @@ const ListProduct = () => {
   const dispatch = useDispatch();
   const globalDataProvinder = useSelector(makeSelectListProduct);
   const dataProvinder = globalDataProvinder?.dataProvinder;
+  const widthDimensions = Dimensions.get("window").width;
 
   const refReleased = useRef(null);
 

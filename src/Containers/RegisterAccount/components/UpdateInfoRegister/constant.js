@@ -1,8 +1,8 @@
 export const updateInfo = [
   {
-    field: "displayName",
-    name: "Full Name*",
-    placeholder: "Enter your Full Name",
+    field: "name",
+    name: "User Name*",
+    placeholder: "Enter your User Name",
   },
   {
     field: "city",

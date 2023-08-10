@@ -20,6 +20,7 @@ import { Controller, useForm } from "react-hook-form";
 import { compose } from "@reduxjs/toolkit";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { useCountdown, useTheme } from "@/Hooks";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 import { activeAccountActions, makeSelectLayout } from "./activeAccountSlice";
 import { styles } from "./style";
@@ -30,6 +31,7 @@ import {
   loginActions,
   makeSelectLogin,
 } from "@/Containers/LoginPage/loginSlice";
+import { makeSelectRegister } from "../../registerSlice";
 
 const schema = yup.object({
   activeCode: yup.string().required("Plesae enter your Active Code"),
@@ -55,70 +57,79 @@ const ActiveAccount = ({ route }) => {
     resolver: yupResolver(schema),
   });
 
-  // Đếm ngược thời gian gửi lại mã
-  useEffect(() => {
-    resetCountdown(60);
-    startCountdown();
-  }, []);
-
-  // Xử lý khi ấn submit
-  const onSubmit = (data) => {
-    const newDataRequest = {
-      ...dataRequestUpdate,
-      data,
-    };
-    dispatch(activeAccountActions.activeAccount(newDataRequest));
-  };
+  // // Đếm ngược thời gian gửi lại mã
+  // useEffect(() => {
+  //   resetCountdown(60);
+  //   startCountdown();
+  // }, []);
 
   // Nhận data từ api trả về
   const globalData = useSelector(makeSelectLayout);
   const { isLoading } = globalData;
   const getDataLogin = useSelector(makeSelectLogin);
   const { loginData, userInfo } = getDataLogin;
+  const globalDataRegister = useSelector(makeSelectRegister);
+  const activeCodeRegister = globalDataRegister?.activeCodeRegister?.otp || "";
+
+  // Xử lý khi ấn submit
+  const onSubmit = (data) => {
+    console.log("activeCodeRegister: ", activeCodeRegister);
+    if (data !== activeCodeRegister) {
+      setError("activeCode", {
+        type: "activeCode",
+        message: "Incorrect activation code",
+      });
+    }
+    const newDataRequest = {
+      ...dataRequestUpdate,
+    };
+    dispatch(activeAccountActions.activeAccount(newDataRequest));
+  };
 
   // Check nếu active thành công thì chuyển đến trang LOGIN
   useEffect(() => {
     if (globalData.isSuccess) {
-      if (loginData.access_token) {
-        dispatch(activeAccountActions.clear());
-        navigation.navigate("LOGIN");
-        toast.closeAll();
-        toast.show({
-          description: "Sucess",
-        });
-      } else {
-        dispatch(activeAccountActions.clear());
-        navigation.navigate("LOGIN");
-        toast.closeAll();
-        toast.show({
-          description: "Sucess",
-        });
-      }
+      // if (loginData.access_token) {
+      //   dispatch(activeAccountActions.clear());
+      //   navigation.navigate("LOGIN");
+      //   toast.closeAll();
+      //   toast.show({
+      //     description: "Sucess",
+      //   });
+      // } else
+      // {
+      dispatch(activeAccountActions.clear());
+      navigation.navigate("LOGIN");
+      showMessage({
+        message: "Success",
+        type: "success",
+      });
+      // }
 
       // reset();
     }
   }, [globalData.isSuccess]);
 
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (event) => {
-        // console.log('aaaaaaa');
-        // trường hợp step active ! === 2 và muốn back lại thì sẽ chặn
-        if (
-          userInfo?.stepActive !== "2" &&
-          (event?.data?.action?.type === "POP" ||
-            event?.data?.action?.type === "GO_BACK")
-        ) {
-          event.preventDefault();
-        }
-        return () => {
-          // console.log('bbbbbbb');
+  // useEffect(
+  //   () =>
+  //     navigation.addListener("beforeRemove", (event) => {
+  //       // console.log('aaaaaaa');
+  //       // trường hợp step active ! === 2 và muốn back lại thì sẽ chặn
+  //       if (
+  //         userInfo?.stepActive !== "2" &&
+  //         (event?.data?.action?.type === "POP" ||
+  //           event?.data?.action?.type === "GO_BACK")
+  //       ) {
+  //         event.preventDefault();
+  //       }
+  //       return () => {
+  //         // console.log('bbbbbbb');
 
-          navigation.removeListener("beforeRemove");
-        };
-      }),
-    [navigation, userInfo]
-  );
+  //         navigation.removeListener("beforeRemove");
+  //       };
+  //     }),
+  //   [navigation, userInfo]
+  // );
 
   // Check nếu mã không chính xác thì sẽ báo lỗi
   useEffect(() => {
@@ -159,19 +170,11 @@ const ActiveAccount = ({ route }) => {
     }, 500);
   };
 
-  // Xử lí khi người dùng click vào gửi lại mã
-  const handleResendCode = () => {
-    const idResend = userInfo?.id;
-    dispatch(activeAccountActions.reActiveAccount(idResend));
-    resetCountdown(60);
-    startCountdown();
-  };
-
-  useEffect(() => {
-    if (countdown === 0) {
-      stopCountdown();
-    }
-  }, [countdown]);
+  // useEffect(() => {
+  //   if (countdown === 0) {
+  //     stopCountdown();
+  //   }
+  // }, [countdown]);
 
   return (
     <KeyboardAvoidingView
@@ -183,6 +186,7 @@ const ActiveAccount = ({ route }) => {
         resizeMode="cover"
         source={require("@/Components/img/backgroundHome.jpg")}
       >
+        <FlashMessage position="top" />
         {/* Header */}
         <View>
           <View style={[Layout.rowHCenter]}>
@@ -212,12 +216,13 @@ const ActiveAccount = ({ route }) => {
           style={[Gutters.regularHMargin, Gutters.regularBMargin]}
           color="white"
         />
+        <View>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ color: Colors.white }}>Back</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.homeContainer}>
           <View style={[styles.registerContainer]}>
-            {isLoading && (
-              <ActivityIndicator size="small" color={Colors.primary} />
-            )}
-
             <View style={[Gutters.smallVMargin, Layout.rowHCenter]}>
               <Text
                 style={[
@@ -269,19 +274,28 @@ const ActiveAccount = ({ route }) => {
             <TouchableOpacity
               style={[ColorText.backgroundPrimary, Border.smallRadius]}
               onPress={handleSubmit(onSubmit)}
+              disabled={isLoading}
             >
-              <Text
-                style={[
-                  ColorText.fontWeight700,
-                  Layout.alignItemsCenter,
-                  Layout.textAlignCenter,
-                  ColorText.white,
-                  Gutters.regularVPadding,
-                  { fontSize: FontSize.small },
-                ]}
-              >
-                ACTIVE
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator
+                  style={[Gutters.regularVPadding]}
+                  size="small"
+                  color={Colors.primary}
+                />
+              ) : (
+                <Text
+                  style={[
+                    ColorText.fontWeight700,
+                    Layout.alignItemsCenter,
+                    Layout.textAlignCenter,
+                    ColorText.white,
+                    Gutters.regularVPadding,
+                    { fontSize: FontSize.small },
+                  ]}
+                >
+                  ACTIVE
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

@@ -32,27 +32,29 @@ import { useTheme } from "@/Hooks";
 import { styles } from "./style";
 import { Divider, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 import {
   loginActions,
   makeSelectLogin,
 } from "@/Containers/LoginPage/loginSlice";
 
 const schema = yup.object({
-  displayName: yup
+  name: yup
     .string()
-    .max(40, "Full Name is max 40 characters")
-    .required("Please enter your Full Name"),
+    .min(6, "At least 6 characters")
+    .max(40, "UserName is max 40 characters")
+    .required("Please enter your UserName"),
   city: yup
     .string()
-    // .max(10, "Tối đa 10 số")
+    .min(6, "At least 6 characters")
     .required("Please enter your City"),
   country: yup
     .string()
-    // .max(10, "Tối đa 10 số")
+    .min(6, "At least 6 characters")
     .required("Please enter your Country"),
   address: yup
     .string()
-    // .max(10, "Tối đa 10 số")
+    .min(6, "At least 6 characters")
     .required("Please enter your Address"),
 
   birthday: yup.string().required("Please choose birth day"),
@@ -109,19 +111,17 @@ const UpdateInfoRegister = ({ route }) => {
   // Xử lý khi ấn submit
   const onSubmit = (data) => {
     setDataRequestUpdate({ ...data, ...dataRequest });
-
     // dispatch(updateInfoActions.updateInfomation(newDataRequest));
   };
 
   useEffect(() => {
     if (Object.keys(dataRequestUpdate).length) {
-      toast.closeAll();
-      toast.show({
-        description:
-          "Success, the activation code has been sent to your email.",
+      showMessage({
+        message: "Success, the activation code has been sent to your email.",
+        type: "success",
       });
 
-      navigation.replace("ACTIVE_ACCOUNT", {
+      navigation.navigate("ACTIVE_ACCOUNT", {
         dataRequestUpdate,
       });
     }
@@ -135,29 +135,6 @@ const UpdateInfoRegister = ({ route }) => {
     setChooseDate(date);
     setValueBirthDay(moment(date).format("DD/MM/YYYY"));
   };
-
-  // Xử lí khi cập nhật thành công thì chuyển sang component active
-  // useEffect(() => {
-  //   if (globalData.isSuccess && !userInfo?.verifiedEmail) {
-  //     dispatch(updateInfoActions.clear());
-  //     navigation.replace("ACTIVE_ACCOUNT", {
-  //       emailUser: emailUser,
-  //     });
-  //     toast.closeAll();
-  //     toast.show({
-  //       description: "Thành công, mã kích hoạt đã được gửi về email của bạn",
-  //     });
-  //   }
-  //   if (globalData.isSuccess && userInfo?.verifiedEmail) {
-  //     dispatch(updateInfoActions.clear());
-  //     navigation.replace("Main");
-  //     toast.closeAll();
-  //     toast.show({
-  //       description: "Thành công",
-  //     });
-  //   }
-  //   reset();
-  // }, [globalData.isSuccess]);
 
   useEffect(() => {
     const isErrorMessage = globalData.isError;
@@ -201,6 +178,8 @@ const UpdateInfoRegister = ({ route }) => {
         resizeMode="cover"
         source={require("@/Components/img/backgroundHome.jpg")}
       >
+        <FlashMessage position="top" />
+
         {/* Header */}
         <View>
           <View style={[Layout.rowHCenter]}>

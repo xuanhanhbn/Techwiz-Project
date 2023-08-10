@@ -12,7 +12,7 @@ export const registerAccount = [
     type: "password",
   },
   {
-    field: "confirmPassword",
+    field: "passwordConfirm",
     name: "Re Password",
     placeholder: "Re Password",
     type: "rePassword",
