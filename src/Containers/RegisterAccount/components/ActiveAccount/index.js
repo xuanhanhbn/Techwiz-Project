@@ -63,7 +63,11 @@ const ActiveAccount = ({ route }) => {
 
   // Xử lý khi ấn submit
   const onSubmit = (data) => {
-    dispatch(activeAccountActions.activeAccount(data));
+    const newDataRequest = {
+      ...dataRequestUpdate,
+      data,
+    };
+    dispatch(activeAccountActions.activeAccount(newDataRequest));
   };
 
   // Nhận data từ api trả về
@@ -77,17 +81,17 @@ const ActiveAccount = ({ route }) => {
     if (globalData.isSuccess) {
       if (loginData.access_token) {
         dispatch(activeAccountActions.clear());
-        navigation.navigate("Main");
+        navigation.navigate("LOGIN");
         toast.closeAll();
         toast.show({
-          description: "Thành công",
+          description: "Sucess",
         });
       } else {
         dispatch(activeAccountActions.clear());
         navigation.navigate("LOGIN");
         toast.closeAll();
         toast.show({
-          description: "Thành công",
+          description: "Sucess",
         });
       }
 
@@ -124,22 +128,23 @@ const ActiveAccount = ({ route }) => {
       dispatch(activeAccountActions.clear());
       setError("activeCode", {
         type: "activeCode",
-        message: "Mã kích hoạt không chính xác",
+        message: "Incorrect activation code",
       });
     }
-    if (isErrorMessage && checkError === "Mã kích hoạt đã hết hạn!") {
-      dispatch(activeAccountActions.clear());
-      setError("activeCode", {
-        type: "activeCode",
-        message: "Mã kích hoạt đã hết hạn!",
-      });
-    }
+    // if (isErrorMessage && checkError === "Mã kích hoạt đã hết hạn!") {
+    //   dispatch(activeAccountActions.clear());
+    //   setError("activeCode", {
+    //     type: "activeCode",
+    //     message: "Mã kích hoạt đã hết hạn!",
+    //   });
+    // }
 
     if (isErrorMessage && checkError === "internet") {
       dispatch(activeAccountActions.clear());
       toast.closeAll();
       toast.show({
-        description: "Có lỗi xảy ra, vui lòng kiểm tra kết nối và thử lại",
+        description:
+          "An error occurred, please check the connection and try again",
       });
     }
   }, [globalData.isError]);

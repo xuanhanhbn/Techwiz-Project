@@ -45,15 +45,7 @@ const LoginModal = (props) => {
   const navigation = useNavigation();
   const loginData = useSelector(makeSelectLogin);
   const { isLoading } = loginData;
-  const {
-    handleShowModal,
-    showMessage,
-    loginMutateFunction,
-    loginWithBiometricsFunction,
-    loginWithFaceBookFunction,
-    loginWithAppleFunction,
-    loginWithGoogleFunction,
-  } = props;
+  const { handleShowModal, showMessage, loginMutateFunction } = props;
   const { width } = Dimensions.get("window");
   // console.log('loginData login modal', loginData);
   const [isShowPassword, setIsShowPassword] = useState(true);
@@ -70,12 +62,13 @@ const LoginModal = (props) => {
   // };
 
   const onSubmit = (data) => {
-    const formData = new FormData();
-    formData.append("username", data.username.trim());
-    formData.append("password", data.password);
-    formData.append("grant_type", "password");
-    formData.append("scope", "read");
-    loginMutateFunction.mutate(formData);
+    console.log("data: ,", data);
+    // const formData = new FormData();
+    // formData.append("username", data.username.trim());
+    // formData.append("password", data.password);
+    // formData.append("grant_type", "password");
+    // formData.append("scope", "read");
+    loginMutateFunction.mutate(data);
     analytics().logLogin({ method: "Manual" });
   };
 
@@ -115,7 +108,6 @@ const LoginModal = (props) => {
   useEffect(() => {
     // dispatch(loginActions.cleanup());
     // getDevice();
-
     getSensorAvailableData();
     getBiometricKeysExist();
     checkSensitiveData();
@@ -124,45 +116,10 @@ const LoginModal = (props) => {
 
   const handleRedirectMain = () => navigation.navigate("Main");
 
-  const getSupportedBiometryType = () => {
-    if (sensorAvailable) {
-      const { biometryType } = sensorAvailable;
-      if (biometryType === BiometryTypes.FaceID) {
-        return "FaceID";
-      }
-      if (biometryType === BiometryTypes.TouchID) {
-        return "TouchID";
-      }
-      if (biometryType === BiometryTypes.Biometrics) {
-        return "TouchID";
-      }
-    }
-    return "";
-  };
-
   const handleRemoveLastLogin = () => {
     setLastUserLogin(null);
     setValue("username", "");
     dispatch(loginActions.cleanup());
-  };
-
-  const loginWithSocial = (data, type, displayName) => {
-    const formData = new FormData();
-    formData.append("username", type);
-    formData.append(
-      "password",
-      type === "Apple" ? data.identityToken : data.accessToken
-    );
-    formData.append("grant_type", "password");
-    formData.append("scope", "read");
-    analytics().logLogin({ method: type });
-    if (type === "Facebook") {
-      return loginWithFaceBookFunction(formData);
-    }
-    if (type === "Apple") {
-      return loginWithAppleFunction({ formData, displayName });
-    }
-    return loginWithGoogleFunction(formData);
   };
 
   const getMainTitle = () => {
@@ -202,7 +159,7 @@ const LoginModal = (props) => {
       <View>
         <View>
           {/* {errorMessage && <Text style={styles.textError}>{errorMessage}</Text>} */}
-          {!lastUserLogin?.username && (
+          {!lastUserLogin?.email && (
             <View>
               {/* <Text style={[styles.label, { color: Colors.black }]}>
                 UserName/Email
@@ -222,11 +179,11 @@ const LoginModal = (props) => {
                       onSubmitEditing={handleSubmit(onSubmit)}
                     />
                   )}
-                  name="username"
+                  name="email"
                 />
               </View>
-              {errors.username && (
-                <Text style={styles.textError}>{errors.username.message}</Text>
+              {errors.email && (
+                <Text style={styles.textError}>{errors.email.message}</Text>
               )}
             </View>
           )}
@@ -279,7 +236,8 @@ const LoginModal = (props) => {
         <View style={styles.boxButton}>
           <TouchableOpacity
             style={[styles.touchableBackground]}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => navigation.navigate("LIST_PRODUCT")}
+            // onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
           >
             {loginMutateFunction.isLoading ? (

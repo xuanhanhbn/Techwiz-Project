@@ -84,13 +84,13 @@ const RegisterAccount = () => {
       ...data,
     };
     setDataRequest(newDataRequest);
-    // dispatch(registerActions.registerAccount(data));
+    dispatch(registerActions.registerAccount(data));
   };
-  useEffect(() => {
-    if (Object.keys(dataRequest).length) {
-      navigation.replace("UPDATE_INFO_ACCOUNT", { dataRequest });
-    }
-  }, [dataRequest]);
+  // useEffect(() => {
+  //   if (Object.keys(dataRequest).length) {
+  //     navigation.replace("UPDATE_INFO_ACCOUNT", { dataRequest });
+  //   }
+  // }, [dataRequest]);
 
   // Xử lý khi người dùng click icon show/hide password
   const handleShowPasswordIcon = (type) => {
@@ -120,19 +120,19 @@ const RegisterAccount = () => {
   };
 
   // Xử lý khi đăng kí thành công thì chuyển form cập nhật
-  // useEffect(() => {
-  //   if (globalData.isSuccess) {
-  //     dispatch(registerActions.clear());
-  //     navigation.replace("UPDATE_INFO_ACCOUNT", {
-  //       dataRegister,
-  //     });
-  //     toast.closeAll();
-  //     toast.show({
-  //       description: "Thành công",
-  //     });
-  //     reset();
-  //   }
-  // }, [globalData.isSuccess]);
+  useEffect(() => {
+    if (globalData.isSuccess) {
+      dispatch(registerActions.clear());
+      navigation.replace("UPDATE_INFO_ACCOUNT", {
+        dataRequest,
+      });
+      toast.closeAll();
+      toast.show({
+        description: "Success",
+      });
+      reset();
+    }
+  }, [globalData.isSuccess]);
 
   // Xử lí check trùng tên đăng nhập
   useEffect(() => {
@@ -174,7 +174,7 @@ const RegisterAccount = () => {
         <View>
           <View style={[Layout.rowHCenter]}>
             <Image
-              style={[{ width: 170, height: 90 }]}
+              style={[{ width: "60%", height: 90 }]}
               source={require("@/Components/img/logo.png")}
             />
 
@@ -183,8 +183,8 @@ const RegisterAccount = () => {
                 <Text
                   style={[
                     ColorText.white,
-                    Gutters.largeLMargin,
                     ColorText.fontWeight700,
+                    Gutters.smallTMargin,
                     { fontSize: FontSize.small },
                   ]}
                 >
@@ -201,10 +201,6 @@ const RegisterAccount = () => {
         />
         <View style={styles.homeContainer}>
           <View style={[styles.registerContainer]}>
-            {isLoading && (
-              <ActivityIndicator size="small" color={Colors.primary} />
-            )}
-
             <ScrollView showsVerticalScrollIndicator={false}>
               <View>
                 {registerAccount.map((item) => {
@@ -284,19 +280,28 @@ const RegisterAccount = () => {
                 <TouchableOpacity
                   style={[ColorText.backgroundPrimary, Border.smallRadius]}
                   onPress={handleSubmit(onSubmit)}
+                  disabled={isLoading}
                 >
-                  <Text
-                    style={[
-                      ColorText.fontWeight700,
-                      Layout.alignItemsCenter,
-                      Layout.textAlignCenter,
-                      ColorText.white,
-                      Gutters.regularVPadding,
-                      { fontSize: FontSize.small },
-                    ]}
-                  >
-                    REGISTER
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={Colors.primary}
+                      style={[Gutters.regularVPadding]}
+                    />
+                  ) : (
+                    <Text
+                      style={[
+                        ColorText.fontWeight700,
+                        Layout.alignItemsCenter,
+                        Layout.textAlignCenter,
+                        ColorText.white,
+                        Gutters.regularVPadding,
+                        { fontSize: FontSize.small },
+                      ]}
+                    >
+                      REGISTER
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <View style={[Gutters.regularVPadding, Layout.center]}>

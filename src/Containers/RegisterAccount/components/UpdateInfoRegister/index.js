@@ -55,12 +55,11 @@ const schema = yup.object({
     // .max(10, "Tối đa 10 số")
     .required("Please enter your Address"),
 
-  birthday: yup.string().required("Vui lòng chọn ngày sinh"),
+  birthday: yup.string().required("Please choose birth day"),
 });
 
 const UpdateInfoRegister = ({ route }) => {
   const { dataRequest } = route.params;
-  console.log("dataRequest: ", dataRequest);
   const globalData = useSelector(makeSelectLayout);
   const { isLoading } = globalData;
   const loginPageData = useSelector(makeSelectLogin);
@@ -109,13 +108,19 @@ const UpdateInfoRegister = ({ route }) => {
 
   // Xử lý khi ấn submit
   const onSubmit = (data) => {
-    console.log("data: ", data);
     setDataRequestUpdate({ ...data, ...dataRequest });
-    // dispatch(updateInfoActions.updateInfomation(parseData));
+
+    // dispatch(updateInfoActions.updateInfomation(newDataRequest));
   };
 
   useEffect(() => {
     if (Object.keys(dataRequestUpdate).length) {
+      toast.closeAll();
+      toast.show({
+        description:
+          "Success, the activation code has been sent to your email.",
+      });
+
       navigation.replace("ACTIVE_ACCOUNT", {
         dataRequestUpdate,
       });

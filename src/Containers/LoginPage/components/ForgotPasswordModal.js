@@ -120,6 +120,7 @@ const ForgotPasswordModal = (props) => {
   }, [countdown]);
 
   const onSubmit = (data) => {
+    console.log("data: ", data);
     if (step === 1) {
       setEmail(data.email);
       dispatch(loginActions.forgotPassword(data));

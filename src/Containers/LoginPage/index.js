@@ -86,6 +86,7 @@ const LoginPage = ({ route }) => {
   });
 
   // Xử lý chuyển màn sau khi đăng nhập thành công
+
   useEffect(() => {
     // console.log('userInfo', userInfo);
     // debugger
@@ -99,11 +100,7 @@ const LoginPage = ({ route }) => {
       } else if (userInfo?.stepActive === "2") {
         // đây là trường hợp người dùng đã đủ thông tin
         // từ màn start
-        if (fromScreen() === "FROM_START") {
-          navigation.replace("Main");
-        } else {
-          navigation.goBack();
-        }
+        navigation.replace("LIST_PRODUCT");
       }
     }
   }, [userInfo]);
@@ -131,7 +128,7 @@ const LoginPage = ({ route }) => {
 
   const loginMutation = useMutation(
     (data) => {
-      return postApiLogin("oauth/token", data, {
+      return postApiLogin("/login", data, {
         "Device-Id": deviceId,
       });
     },
@@ -177,7 +174,7 @@ const LoginPage = ({ route }) => {
             styles.borderBottomHeader,
           ]}
         >
-          <View style={[Gutters.smallRPadding, Gutters.smallRMargin]}>
+          <View>
             <Image
               style={{ width: 170, height: 90 }}
               source={require("@/Components/img/logo.png")}
@@ -192,7 +189,7 @@ const LoginPage = ({ route }) => {
               ]}
             >
               {/* <Text style={[styles.textWhite, styles.textBold]}>Login</Text> */}
-              <View>
+              <View style={[Gutters.smallTMargin]}>
                 <TouchableOpacity
                   style={[Layout.rowHCenter, styles.justifyContentEnd]}
                   onPress={() => navigation.push("REGISTER_ACCOUNT")}

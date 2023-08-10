@@ -29,7 +29,7 @@ const StartupContainer = () => {
         return "ACTIVE_ACCOUNT";
       }
       if (stepActive === "2") {
-        return "Main";
+        return "LOGIN";
       }
     }
     return "Start";

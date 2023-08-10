@@ -100,6 +100,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     // marginRight: 15,
   },
+  touchableGuestBackground: {
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    borderRadius: 8,
+    // marginTop: 18,
+    flexGrow: 1,
+    // marginRight: 15,
+  },
   boxContinue: {
     display: "flex",
     justifyContent: "center",
@@ -123,6 +131,11 @@ const styles = StyleSheet.create({
   },
   touchableBackgroundText: {
     color: "#ffffff",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  touchableBackgroundTextGuest: {
+    color: Colors.primary,
     textAlign: "center",
     fontWeight: "bold",
   },

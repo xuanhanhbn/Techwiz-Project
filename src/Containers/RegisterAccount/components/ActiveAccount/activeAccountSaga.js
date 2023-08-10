@@ -1,26 +1,27 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { activeAccountActions } from './activeAccountSlice';
-import { postApi } from './api';
+import { call, put, takeLatest } from "redux-saga/effects";
+import { activeAccountActions } from "./activeAccountSlice";
+import { postApi } from "./api";
 
 function* onActive(data) {
   const payload = data.payload || [];
-  const url = 'users/check-active-code';
+  console.log("payload: ", payload);
+  const url = "signup";
   try {
     const response = yield call(postApi, url, payload);
     if (response && response.data.status === 1) {
       yield put(activeAccountActions.activeAccountSuccess(response.data));
     } else {
       yield put(
-        activeAccountActions.activeAccountFailed(response.data.errorMsg),
+        activeAccountActions.activeAccountFailed(response.data.errorMsg)
       );
     }
   } catch (error) {
-    yield put(activeAccountActions.activeAccountFailed('internet'));
+    yield put(activeAccountActions.activeAccountFailed("internet"));
   }
 }
 
 function* reActive(data) {
-  const id = data.payload || '';
+  const id = data.payload || "";
   const url = `users/active-code/resend/${id}`;
   try {
     const response = yield call(postApi, url, id);
@@ -28,11 +29,11 @@ function* reActive(data) {
       yield put(activeAccountActions.reActiveAccountSuccess(response.data));
     } else {
       yield put(
-        activeAccountActions.reActiveAccountFailed(response.data.errorMsg),
+        activeAccountActions.reActiveAccountFailed(response.data.errorMsg)
       );
     }
   } catch (error) {
-    yield put(activeAccountActions.reActiveAccountFailed('internet'));
+    yield put(activeAccountActions.reActiveAccountFailed("internet"));
   }
 }
 

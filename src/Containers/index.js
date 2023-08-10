@@ -1,11 +1,15 @@
-export { default as StartupContainer } from './StartupContainer';
-export { default as NotificationContainer } from './Notifications';
-export {default as SettingContainer} from './Setting'
+export { default as StartupContainer } from "./StartupContainer";
+export { default as NotificationContainer } from "./Notifications";
+export { default as SettingContainer } from "./Setting";
 
 // REGISTER ACCOUNT
-export { default as RegisterAccountContainer } from './RegisterAccount';
-export { default as UpdateAccountContainer } from './RegisterAccount/components/UpdateInfoRegister';
-export { default as ActiveAccountContainer } from './RegisterAccount/components/ActiveAccount';
+export { default as RegisterAccountContainer } from "./RegisterAccount";
+export { default as UpdateAccountContainer } from "./RegisterAccount/components/UpdateInfoRegister";
+export { default as ActiveAccountContainer } from "./RegisterAccount/components/ActiveAccount";
 
 // LOGIN
-export { default as LoginPageContainer } from './LoginPage';
+export { default as LoginPageContainer } from "./LoginPage";
+
+// LIST PRODUCT
+export { default as ListProductContainer } from "./ListProduct";
+export { default as DetailProductContainer } from "./ListProduct/components/ProductDetails";

@@ -19,20 +19,14 @@ export const postApi = (url, data) =>
 export const postApiLogin = (url, data, header) =>
   new Promise((resolve, reject) =>
     baseApiUrlAuth
-      .post(url, data, {
-        headers: {
-          ...(header || {}),
-          Authorization: "Basic bW9iaWxlYXBwOmVuYW9AMTIz",
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      .post(url, data)
       .then((res) => resolve(res))
       .catch((err) => reject(err))
   );
 
 export const getApiUser = (url) =>
   new Promise((resolve, reject) =>
-  baseApiUrlAuth
+    baseApiUrlAuth
       .get(url)
       .then((res) => resolve(res))
       .catch((err) => reject(err))

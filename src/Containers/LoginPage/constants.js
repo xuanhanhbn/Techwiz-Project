@@ -29,7 +29,7 @@ yup.addMethod(yup.string, "containNumber", function (message) {
 });
 
 export const loginSchema = yup.object({
-  username: yup.string().required("Please enter your Username/Email"),
+  email: yup.string().required("Please enter your Username/Email"),
   password: yup.string().required("Please enter your Password"),
 });
 
