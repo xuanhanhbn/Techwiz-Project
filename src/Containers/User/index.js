@@ -1,0 +1,433 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  // ActivityIndicator,
+  Text,
+  // TextInput,
+  TouchableOpacity,
+  ScrollView,
+  // Button,
+  Image,
+  // Modal,
+  Pressable,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+// import { useTranslation } from 'react-i18next';
+import { useTheme } from "@/Hooks";
+// import { changeTheme } from '@/Store/Theme';
+import { userActions, makeSelectUser } from "./userSlice";
+import {
+  loginActions,
+  makeSelectLogin,
+} from "@/Containers/LoginPage/loginSlice";
+import Icon from "react-native-vector-icons/Ionicons";
+import IconFeather from "react-native-vector-icons/Feather";
+// import FontAweSoweIcons from 'react-native-vector-icons/FontAwesome';
+import { ListItem, Dialog } from "@rneui/themed";
+import { listTitle } from "./constants";
+import UpdateUserModal from "./components/UpdateUserModal";
+import ChangePassword from "./components/ChangePassword";
+import GeneralAccountModal from "./components/GeneralAccountModal";
+import { useToast } from "native-base";
+import Clipboard from "@react-native-clipboard/clipboard";
+import EncryptedStorage from "react-native-encrypted-storage";
+import { useFocusEffect } from "@react-navigation/native";
+// import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+// import ActionSheet from 'react-native-actions-sheet';
+import styles from "./style";
+import { useNavigation } from "@react-navigation/native";
+
+const User = ({ route }) => {
+  // const { t } = useTranslation();
+  const navigation = useNavigation();
+  const { Fonts, Gutters, Layout, Colors, ColorText } = useTheme();
+  const dispatch = useDispatch();
+  const toast = useToast();
+  // const { isOpen, onOpen, onClose } = useDisclose();
+
+  const userData = useSelector(makeSelectUser);
+  const loginPageData = useSelector(makeSelectLogin);
+  const {
+    isLoading,
+    // userInfo,
+    // accountBalance,
+    isUpdateUserSuccess,
+    isChangePasswordSuccess,
+    // isLogoutSuccess,
+    errorMessage,
+  } = userData;
+  const { userInfo } = loginPageData;
+  // const { userType } = userInfo || ''; // lay ra user Type
+  // console.log('user index page');
+
+  // console.log('====================================');
+  // console.log('errorMessage', errorMessage);
+  // console.log('====================================');
+  const { type } = route.params;
+
+  const [expanded, setExpanded] = useState(false);
+  // const [visible, setVisible] = useState(false);
+  const [title, setTitle] = useState(listTitle[0]);
+  const [isShowModal, setIsShowModal] = useState({
+    generalAccountModal: false,
+    changePasswordModal: false,
+    updateUserModal: false,
+    logoutModal: false,
+  });
+
+  // const actionSheetRef = useRef(null);
+
+  const handleShowToast = (text) => {
+    toast.closeAll();
+    return toast.show({
+      duration: 2000,
+      placement: "top",
+      description: text,
+    });
+  };
+
+  // useEffect(() => {
+  //   dispatch(userActions.cleanup())
+  //   dispatch(userActions.getUser())
+  //   // dispatch(userActions.getAccountBalance());
+  // }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // dispatch(userActions.cleanup())
+      dispatch(loginActions.getUserInfo());
+      // dispatch(userActions.test());
+      // dispatch(userActions.getAccountBalance());
+    }, [])
+  );
+
+  useEffect(() => {
+    handleShowModal(type);
+  }, [type]);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     dispatch(userActions.cleanup())
+  //     dispatch(userActions.getUser())
+  //     // dispatch(userActions.getAccountBalance());
+  //   }, []),
+  // )
+
+  useEffect(() => {
+    if (isUpdateUserSuccess) {
+      dispatch(userActions.cleanup());
+      dispatch(loginActions.getUserInfo());
+      // dispatch(userActions.getAccountBalance());
+      handleShowModal("generalAccountModal");
+      handleShowToast("Cập nhật hồ sơ thành công");
+    }
+  }, [isUpdateUserSuccess]);
+
+  useEffect(() => {
+    if (isChangePasswordSuccess) {
+      dispatch(userActions.cleanup());
+      dispatch(loginActions.getUserInfo());
+      // dispatch(userActions.getAccountBalance());
+      handleShowModal("generalAccountModal");
+      handleShowToast("Cập nhật mật khẩu thành công");
+    }
+  }, [isChangePasswordSuccess]);
+
+  // useEffect(() => {
+  //   if (isLogoutSuccess) {
+  //     dispatch(userActions.cleanup());
+  //     EncryptedStorage.removeItem('loginData');
+  //     navigation.navigate('LOGIN');
+  //     handleShowToast('Đăng xuất thành công');
+  //   }
+  // }, [isLogoutSuccess]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      handleShowToast(errorMessage);
+    }
+  }, [errorMessage]);
+
+  // Set title cho list dropdown
+  const getTitle = (modalType) => {
+    const indexTitle = listTitle.findIndex((item) => item.type === modalType);
+    setTitle(listTitle[indexTitle]);
+  };
+
+  // Thay đổi các modal hiển thị bên dưới
+  const handleShowModal = (modalType) => {
+    const newShowModal = { ...isShowModal };
+    if (modalType !== "logoutModal") {
+      Object.keys(newShowModal).forEach((key) => {
+        newShowModal[key] = false;
+      });
+      getTitle(modalType);
+      setIsShowModal({
+        ...newShowModal,
+        [modalType]: true,
+      });
+    } else {
+      // actionSheetRef.current?.show()
+      setIsShowModal({
+        ...newShowModal,
+        [modalType]: true,
+      });
+    }
+    setExpanded(false);
+  };
+
+  // Xử lý đóng logout modal
+  const handleCloseLogoutModal = () => {
+    const newShowModal = { ...isShowModal };
+    setIsShowModal({
+      ...newShowModal,
+      logoutModal: false,
+    });
+  };
+
+  //  Đăng xuất
+  const handleLogout = async () => {
+    await EncryptedStorage.removeItem("loginData");
+    dispatch(userActions.logout());
+    // handleCloseActionSheet()
+    // actionSheetRef.current?.hide()
+    handleCloseLogoutModal();
+    dispatch(loginActions.cleanup()); // clear dữ liệu của login store
+    dispatch(userActions.cleanup());
+    navigation.navigate("LOGIN"); // luôn navigate khi người dùng ấn đăng xuất mặc dù api có thành công hay không
+    handleShowToast("Đăng xuất thành công");
+  };
+
+  // const getRefreshToken = () =>
+  //   (JSON.parse(sessionStorage.getItem("loginData")) &&
+  //     JSON.parse(sessionStorage.getItem("loginData")).refreshToken) ||
+  //   null;
+
+  // const onChangeTheme = ({ theme, darkMode }) => {
+  //   dispatch(changeTheme({ theme, darkMode }))
+  // }
+
+  // copy
+  const copyToClipboard = async (text) => {
+    Clipboard.setString(text);
+    handleShowToast("Đã sao chép");
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={Layout.fill}
+      behavior={Platform.OS === "ios" ? "padding" : null}
+    >
+      <View style={styles.wrapper}>
+        <View
+          style={[
+            styles.topBackground,
+            { backgroundColor: Colors.coloredBackground },
+          ]}
+        />
+        <Pressable
+          onPress={() => navigation.goBack()}
+          style={[
+            Gutters.middleBMargin,
+            Gutters.largeTMargin,
+            Gutters.middleLMargin,
+            styles.backButton,
+          ]}
+          hitSlop={{ bottom: 20, left: 20, right: 20, top: 20 }} // expand pham vi cua button
+        >
+          <IconFeather
+            name="chevron-left"
+            size={20}
+            style={{ color: Colors.text }}
+          />
+        </Pressable>
+        <View style={[Gutters.regularHPadding]}>
+          <View
+            style={[
+              styles.container,
+              styles.zIndex1,
+              { backgroundColor: Colors.modalBackground },
+            ]}
+          >
+            <View
+              style={[
+                styles.topElements,
+                styles.borderBottom,
+                Gutters.regularBPadding,
+              ]}
+            >
+              <Image
+                source={require("@/Components/img/blankProfile.webp")}
+                style={styles.avatar}
+                alt="avatar"
+              />
+
+              <View>
+                <Text style={[ColorText.textPrimary, ColorText.fontWeight700]}>
+                  {userInfo?.displayName}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => copyToClipboard(userInfo?.username)}
+                >
+                  <View style={styles.boxUserName}>
+                    <View style={styles.userName}>
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.greyText, Gutters.tinyTMargin]}
+                      >
+                        {userInfo?.username}
+                      </Text>
+                    </View>
+                    <View>
+                      <Icon name="copy-outline" />
+                    </View>
+                  </View>
+                  {/* <Text style={[styles.greyText, Gutters.tinyTMargin]}>
+                    {userInfo?.username} <Icon name="copy-outline" />
+                  </Text> */}
+                </TouchableOpacity>
+              </View>
+            </View>
+            <ListItem.Accordion
+              content={
+                <>
+                  <ListItem
+                    containerStyle={[
+                      Gutters.noneHPadding,
+                      Gutters.noneVPadding,
+                      { backgroundColor: Colors.modalBackground },
+                    ]}
+                  >
+                    <IconFeather
+                      name={title.icon}
+                      size={20}
+                      style={styles.orangeIcon}
+                    />
+                    <ListItem.Subtitle style={{ color: Colors.text }}>
+                      {title.title}
+                    </ListItem.Subtitle>
+                  </ListItem>
+                </>
+              }
+              isExpanded={expanded}
+              onPress={() => {
+                setExpanded(!expanded);
+              }}
+              containerStyle={[
+                Gutters.noneHPadding,
+                Gutters.noneVPadding,
+                Gutters.regularTMargin,
+                Layout.justifyContentBetween,
+                { backgroundColor: Colors.modalBackground },
+              ]}
+              icon={<IconFeather name="chevron-down" size={20} />}
+            >
+              {listTitle
+                .filter((item) => item.title !== title.title)
+                .map((item) => (
+                  <ListItem
+                    disabled={
+                      userInfo?.userType !== "WEBAPP" &&
+                      item.type === "changePasswordModal"
+                        ? true
+                        : false
+                    }
+                    onPress={() => {
+                      setExpanded(false);
+                      handleShowModal(item.type);
+                    }}
+                    containerStyle={[
+                      Gutters.noneHPadding,
+                      Gutters.noneBPadding,
+                      Gutters.smallTMargin,
+                      { backgroundColor: Colors.modalBackground },
+                    ]}
+                    key={item.type}
+                  >
+                    <IconFeather
+                      name={item.icon}
+                      size={20}
+                      style={styles.orangeIcon}
+                    />
+                    <ListItem.Subtitle
+                      style={{
+                        color:
+                          userInfo?.userType !== "WEBAPP" &&
+                          item.type === "changePasswordModal"
+                            ? "#ccc"
+                            : Colors.text,
+                      }}
+                    >
+                      {item.title}
+                    </ListItem.Subtitle>
+                  </ListItem>
+                ))}
+            </ListItem.Accordion>
+          </View>
+        </View>
+        <ScrollView style={styles.scrollView}>
+          {isShowModal.generalAccountModal && (
+            <GeneralAccountModal
+              userInfo={userInfo}
+              handleShowModal={handleShowModal}
+            />
+          )}
+          {isShowModal.updateUserModal && (
+            <UpdateUserModal
+              userInfo={userInfo}
+              handleShowModal={handleShowModal}
+              isLoading={isLoading}
+            />
+          )}
+          {isShowModal.changePasswordModal && (
+            <ChangePassword
+              handleShowModal={handleShowModal}
+              isLoading={isLoading}
+            />
+          )}
+        </ScrollView>
+        <Dialog
+          isVisible={isShowModal.logoutModal}
+          onBackdropPress={() => handleCloseLogoutModal()}
+        >
+          <Text>Bạn có chắc chắn muốn đăng xuất không?</Text>
+          <View
+            style={[
+              Layout.row,
+              Layout.justifyContentBetween,
+              Gutters.largeTMargin,
+              Gutters.regularHPadding,
+            ]}
+          >
+            <Pressable
+              style={[
+                Gutters.smallVPadding,
+                Gutters.tinyHPadding,
+                Layout.center,
+              ]}
+              onPress={() => handleCloseLogoutModal()}
+            >
+              <Text style={[Fonts.textBold]}>Hủy</Text>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.buttonDanger,
+                Gutters.smallVPadding,
+                Gutters.regularHPadding,
+              ]}
+              onPress={() => handleLogout()}
+            >
+              <Text style={[ColorText.white, Fonts.textBold]}>Đăng xuất</Text>
+            </Pressable>
+          </View>
+        </Dialog>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+
+export default User;

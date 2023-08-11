@@ -27,9 +27,14 @@ const ListProduct = () => {
   const widthDimensions = Dimensions.get("window").width;
 
   const refReleased = useRef(null);
+  const refListProvinde = useRef();
+
+  const handleGetListProvinder = () => {
+    dispatch(listProductActions.getListProvinder());
+  };
 
   useEffect(() => {
-    // dispatch(listProductActions.getListProvinder());
+    handleGetListProvinder();
   }, []);
 
   const handleChangeDetails = () => {
@@ -38,18 +43,15 @@ const ListProduct = () => {
 
   return (
     <ScrollView
+      ref={refListProvinde}
+      refreshControl={() => handleGetListProvinder()}
       style={Layout.fill}
-      // contentContainerStyle={[
-      //   Layout.fill,
-      //   Layout.colCenter,
-      //   Gutters.smallHPadding,
-      // ]}
     >
       <View style={[Layout.fill, Gutters.regularTMargin]}>
         {/* Banner */}
         <View style={[Layout.colCenter]}>
           <Image
-            style={{ height: 400, width: 350 }}
+            style={{ height: 400, width: widthDimensions }}
             source={require("@/Components/img/banner.webp")}
           />
         </View>

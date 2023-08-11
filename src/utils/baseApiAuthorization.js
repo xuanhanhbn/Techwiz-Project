@@ -25,7 +25,7 @@ baseInstance.interceptors.request.use(
       const loginData = await EncryptedStorage.getItem("loginData");
       if (loginData !== undefined) {
         const loginDataParse = JSON.parse(loginData);
-        config.headers.Authorization = `Bearer ${loginDataParse.access_token}`;
+        config.headers.Authorization = `Bearer ${loginDataParse}`;
       }
     } catch (error) {
       config.validateStatus = (status) => status < 500;

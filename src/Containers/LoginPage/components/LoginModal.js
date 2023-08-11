@@ -62,7 +62,6 @@ const LoginModal = (props) => {
   // };
 
   const onSubmit = (data) => {
-    console.log("data: ,", data);
     // const formData = new FormData();
     // formData.append("username", data.username.trim());
     // formData.append("password", data.password);
@@ -236,8 +235,7 @@ const LoginModal = (props) => {
         <View style={styles.boxButton}>
           <TouchableOpacity
             style={[styles.touchableBackground]}
-            onPress={() => navigation.navigate("LIST_PRODUCT")}
-            // onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
           >
             {loginMutateFunction.isLoading ? (

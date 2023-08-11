@@ -4,12 +4,10 @@ import { postApi } from "./api";
 
 function* onActive(data) {
   const payload = data.payload || [];
-  console.log("payload: ", payload);
   const url = "signup";
   try {
     const response = yield call(postApi, url, payload);
-    console.log("res: ", response);
-    if (response && response.data.status === 1) {
+    if (response && response.status === 201) {
       yield put(activeAccountActions.activeAccountSuccess(response.data));
     } else {
       yield put(

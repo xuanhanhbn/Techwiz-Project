@@ -7,20 +7,22 @@ import {
   SettingContainer,
   ListProductContainer,
   DetailProductContainer,
+  ListProvinderContainer,
+  ListFavoritesListContainer,
 } from "@/Containers";
 
 export default [
   {
     name: "LIST_PRODUCT",
-    title: "List Product",
+    title: "Home",
     KEY: "LIST_PRODUCT",
     path: "/",
     icon: {
       type: "FEATHER",
-      name: "bell",
+      name: "home",
     },
     component: ListProductContainer,
-    // isShowBottom: true,
+    isShowBottom: true,
   },
   {
     name: "DETAILS_PRODUCT",
@@ -35,18 +37,42 @@ export default [
     // isShowBottom: true,
   },
   {
-    name: "NOTIFICATION",
-    title: "Thông Báo",
-    KEY: "NOTIFICATION",
+    name: "LIST_PROVINDER",
+    title: "List Provinder",
+    KEY: "LIST_PROVINDER",
+    path: "/",
+    icon: {
+      type: "IONIC",
+      name: "newspaper-outline",
+    },
+    component: ListProvinderContainer,
+    isShowBottom: true,
+  },
+  {
+    name: "LIST_FAVORITES",
+    title: "List Favorites",
+    KEY: "LIST_FAVORITES",
     path: "/",
     icon: {
       type: "FEATHER",
-      name: "bell",
+      name: "heart",
     },
-    component: NotificationContainer,
+    component: ListFavoritesListContainer,
     isShowBottom: true,
-    isBadge: true,
   },
+  // {
+  //   name: "NOTIFICATION",
+  //   title: "Thông Báo",
+  //   KEY: "NOTIFICATION",
+  //   path: "/",
+  //   icon: {
+  //     type: "FEATHER",
+  //     name: "bell",
+  //   },
+  //   component: NotificationContainer,
+  //   isShowBottom: true,
+  //   isBadge: true,
+  // },
   {
     name: "SETTING",
     title: "Cài đặt",
@@ -57,7 +83,7 @@ export default [
       name: "settings",
     },
     component: SettingContainer,
-    // isShowBottom: true,
+    isShowBottom: true,
   },
 
   {

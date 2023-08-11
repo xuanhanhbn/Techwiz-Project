@@ -76,7 +76,8 @@ const LoginPage = ({ route }) => {
   const { isError, error, refetch } = useQuery({
     queryKey: ["getMe", accessToken],
     queryFn: async () => {
-      const data = await getApiUser("users/me");
+      const data = await getApiUser("/profile");
+      console.log("dataGetme: ", data);
       if (data) {
         setUserInfo(data.data);
         await EncryptedStorage.setItem("userInfo", JSON.stringify(data.data));
@@ -93,15 +94,15 @@ const LoginPage = ({ route }) => {
     if (accessToken) {
       // debugger
       // (fromScreen() !== 'UPDATE_INFO_ACCOUNT') khi đẩy từ màn cập nhật thông tin sang mà chưa chưa clear store sẽ không đẩy về màn trước
-      if (userInfo?.stepActive === "0") {
-        navigation.replace("UPDATE_INFO_ACCOUNT");
-      } else if (userInfo?.stepActive === "1") {
-        navigation.replace("ACTIVE_ACCOUNT");
-      } else if (userInfo?.stepActive === "2") {
-        // đây là trường hợp người dùng đã đủ thông tin
-        // từ màn start
-        navigation.replace("LIST_PRODUCT");
-      }
+      // if (userInfo?.stepActive === "0") {
+      //   navigation.replace("UPDATE_INFO_ACCOUNT");
+      // } else if (userInfo?.stepActive === "1") {
+      //   navigation.replace("ACTIVE_ACCOUNT");
+      // } else if (userInfo?.stepActive === "2") {
+      //   // đây là trường hợp người dùng đã đủ thông tin
+      //   // từ màn start
+      // }
+      navigation.replace("Main");
     }
   }, [userInfo]);
 
@@ -134,23 +135,23 @@ const LoginPage = ({ route }) => {
     },
     {
       onSuccess: async (data, variables, context) => {
-        if (data.data?.access_token) {
+        if (data.data?.token) {
           await EncryptedStorage.setItem(
             "loginData",
-            JSON.stringify(data.data)
+            JSON.stringify(data?.data?.token)
           );
-          setAccessToken(data.data.access_token);
+          setAccessToken(data.data.token);
           refetch();
         } else {
           handleShowMessage({
-            message: data.data.errorMsg,
+            message: "An error occurred, please try again",
             type: "danger",
           });
         }
       },
       onError: async (data) => {
         handleShowMessage({
-          message: data.message,
+          message: "An error occurred, please try again",
           type: "danger",
         });
       },

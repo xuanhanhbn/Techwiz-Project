@@ -89,24 +89,12 @@ const ActiveAccount = ({ route }) => {
   // Check nếu active thành công thì chuyển đến trang LOGIN
   useEffect(() => {
     if (globalData.isSuccess) {
-      // if (loginData.access_token) {
-      //   dispatch(activeAccountActions.clear());
-      //   navigation.navigate("LOGIN");
-      //   toast.closeAll();
-      //   toast.show({
-      //     description: "Sucess",
-      //   });
-      // } else
-      // {
       dispatch(activeAccountActions.clear());
       navigation.navigate("LOGIN");
       showMessage({
         message: "Success",
         type: "success",
       });
-      // }
-
-      // reset();
     }
   }, [globalData.isSuccess]);
 

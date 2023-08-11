@@ -1,6 +1,5 @@
 export { default as StartupContainer } from "./StartupContainer";
 export { default as NotificationContainer } from "./Notifications";
-export { default as SettingContainer } from "./Setting";
 
 // REGISTER ACCOUNT
 export { default as RegisterAccountContainer } from "./RegisterAccount";
@@ -10,6 +9,15 @@ export { default as ActiveAccountContainer } from "./RegisterAccount/components/
 // LOGIN
 export { default as LoginPageContainer } from "./LoginPage";
 
-// LIST PRODUCT
+// HOME PAGE
 export { default as ListProductContainer } from "./ListProduct";
 export { default as DetailProductContainer } from "./ListProduct/components/ProductDetails";
+
+// LIST PROVINDER
+export { default as ListProvinderContainer } from "./ListProvider";
+
+// LIST FAVORITES
+export { default as ListFavoritesListContainer } from "./FavoritesList";
+
+// SETTINGS
+export { default as SettingContainer } from "./User/Setting";
