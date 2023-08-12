@@ -10,9 +10,9 @@ function FourScreen() {
   const heightDimensions = Dimensions.get("window").height;
 
   return (
-    <View style={[Layout.fill, { backgroundColor: "#000", opacity: 0.5 }]}>
+    <View style={[Layout.fill]}>
       <Image
-        style={[{ width: "60%", height: 90, zIndex: 9 }]}
+        style={[{ width: "60%", height: 90 }]}
         source={require("@/Components/img/logo.png")}
       />
       <View
@@ -22,13 +22,10 @@ function FourScreen() {
         ]}
       >
         <Image
-          style={[
-            Gutters.regularBMargin,
-            { width: widthDimensions, height: heightDimensions },
-          ]}
+          style={[Gutters.regularBMargin, { width: widthDimensions }]}
           source={require("@/Components/img/4.png")}
         />
-        <View style={{ zIndex: 99 }}>
+        <View>
           <Text style={[Colors.white, { zIndex: 99 }]}>Trai nghiem ngay</Text>
         </View>
       </View>

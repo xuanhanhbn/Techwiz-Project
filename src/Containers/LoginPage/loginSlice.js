@@ -1,8 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
-  errorMessage: '',
+  errorMessage: "",
   loginData: {},
   userInfo: {},
   isLoginSuccess: false,
@@ -12,22 +12,22 @@ const initialState = {
 };
 
 const loginSlice = createSlice({
-  name: 'login',
+  name: "login",
   initialState,
   reducers: {
     login(state) {
       state.isLoading = true;
     },
-    loginWithBiometrics(state, action){
+    loginWithBiometrics(state, action) {
       state.isLoading = true;
     },
-    loginWithFaceBook(state, action){
+    loginWithFaceBook(state, action) {
       state.isLoading = true;
     },
-    loginWithApple(state, action){
+    loginWithApple(state, action) {
       state.isLoading = true;
     },
-    loginWithGoogle(state, action){
+    loginWithGoogle(state, action) {
       state.isLoading = true;
     },
     loginFailed(state, action) {
@@ -85,7 +85,7 @@ const loginSlice = createSlice({
     },
     cleanup(state) {
       state.isLoading = false;
-      state.errorMessage = '';
+      state.errorMessage = "";
       state.loginData = {};
       state.userInfo = {};
       state.isLoginSuccess = false;

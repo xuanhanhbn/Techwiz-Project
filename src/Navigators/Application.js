@@ -127,7 +127,6 @@ const ApplicationNavigator = () => {
         theme={NavigationTheme}
         ref={navigationRef}
         onReady={() => {
-          // console.log('navigationRef?.current?.getCurrentRoute()', navigationRef?.current?.getCurrentRoute());
           routeNameRef.current =
             navigationRef?.current?.getCurrentRoute()?.name;
         }}

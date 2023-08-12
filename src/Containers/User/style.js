@@ -1,17 +1,18 @@
-import { StyleSheet } from 'react-native';
+import { Colors } from "@/Theme/Variables";
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    // backgroundColor: '#ffffff'
+    backgroundColor: "#000",
   },
   container: {
-    width: '100%',
-    backgroundColor: '#ffffff',
+    width: "100%",
+    backgroundColor: "#ffffff",
     borderRadius: 10,
     padding: 22,
     marginTop: 20,
-    shadowColor: '#000000',
+    shadowColor: "#000000",
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.1,
     // shadowRadius: 2,
@@ -20,38 +21,42 @@ const styles = StyleSheet.create({
   zIndex1: {
     zIndex: 10,
   },
-  boxUserName: { display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center' },
-  userName: { maxWidth: '85%', overflow: 'hidden' },
+  boxUserName: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+  },
+  userName: { maxWidth: "85%", overflow: "hidden" },
   boxIconCopy: { paddingLeft: 5 },
   boxBiometrics: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    width: '100%',
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    width: "100%",
   },
   boxBiometricsLeft: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
   },
   topBackground: {
-    width: '100%',
+    width: "100%",
     height: 150,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
-    backgroundColor: '#FFF7F5',
   },
   topElements: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: "center",
   },
   scrollView: {
     paddingHorizontal: 20,
   },
   flexBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   avatar: {
     width: 52,
@@ -60,24 +65,26 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   greyText: {
-    color: '#B5B5B5',
+    color: Colors.white,
+    fontWeight: "600",
     marginBottom: 5,
+    fontSize: 18,
     // fontSize: 12,
   },
   orangeIcon: {
-    color: '#F24822',
+    color: Colors.primary,
   },
   borderBottom: {
-    borderBottomColor: 'rgba(7, 27, 166, 0.04)',
+    borderBottomColor: "#aaa",
     borderBottomWidth: 1,
   },
   title: {
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: "800",
   },
   subTitle: {
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   faceId: {
     width: 20,
@@ -85,30 +92,31 @@ const styles = StyleSheet.create({
   },
   bigNumber: {
     fontSize: 40,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   touchable: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   touchableText: {
-    color: '#F24822',
+    color: Colors.primary,
+    fontWeight: "500",
   },
   buttonPrimary: {
-    backgroundColor: '#FC5B00',
+    backgroundColor: Colors.primary,
     borderRadius: 8,
   },
   buttonSecondary: {
-    backgroundColor: '#FFF7F5',
+    backgroundColor: "#FFF7F5",
     borderRadius: 8,
   },
   backButton: {
     marginTop: 60,
   },
   packageBox: {
-    backgroundColor: '#FFF7F5',
+    backgroundColor: "#FFF7F5",
     borderRadius: 8,
-    width: '48%',
+    width: "48%",
     marginTop: 12,
     paddingTop: 80,
     paddingLeft: 15,
@@ -125,15 +133,15 @@ const styles = StyleSheet.create({
   inputContainer: {
     // backgroundColor: "#FFF7F5",
     paddingHorizontal: 20,
-    width: '100%',
+    width: "100%",
     height: 56,
     borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   input: {
-    minWidth: '80%',
+    minWidth: "80%",
   },
 });
 

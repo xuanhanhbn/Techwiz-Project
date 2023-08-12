@@ -1,36 +1,78 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
-  ActivityIndicator,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   Image,
-  FlatList,
-  ImageBackground,
   Dimensions,
+  Linking,
+  StyleSheet,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import IconIonic from "react-native-vector-icons/Ionicons";
+import IconFeather from "react-native-vector-icons/Feather";
 import { useTheme } from "@/Hooks";
+import {
+  listProductActions,
+  makeSelectListProduct,
+} from "../../listProductSlice";
+import { Tooltip } from "native-base";
+import { baseApiUrlGetImage } from "@/utils/constants";
+import { useNavigation } from "@react-navigation/native";
 
-const DetailsProduct = () => {
-  const { t } = useTranslation();
-  const { Common, Fonts, Gutters, Layout, Colors, ColorText, FontSize } =
-    useTheme();
+const DetailsProduct = (route) => {
+  const itemProvinder = route?.route?.params?.itemProvinder;
+  const getDataDetailProvinder = useSelector(makeSelectListProduct);
+  const dataListProductByProvinder =
+    getDataDetailProvinder?.dataListProductByProvinder || [];
+  const {
+    Common,
+    Fonts,
+    Gutters,
+    Layout,
+    Colors,
+    ColorText,
+    FontSize,
+    FontSizeResponsive,
+    Border,
+  } = useTheme();
+
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [isOpenToolTip, setIsOpenToolTip] = useState(false);
   const widthDimensions = Dimensions.get("window").width;
 
   const refReleased = useRef(null);
 
+  const handleGetData = () => {
+    const idProvinder = itemProvinder?._id;
+    dispatch(listProductActions.getDetailsProvinder(idProvinder));
+  };
+
+  const handleGetProductByProvider = () => {
+    const idProvinder = itemProvinder?._id;
+    dispatch(listProductActions.getListProductByProvider(idProvinder));
+  };
+
   useEffect(() => {
-    // dispatch(listProductActions.getListProvinder());
+    handleGetData();
+    handleGetProductByProvider();
   }, []);
 
   const handleShowListPackage = () => {
     console.log("list");
   };
+  const handleFeedbackProvider = () => {
+    console.log("feedback");
+    setIsOpenToolTip(!isOpenToolTip);
+  };
+
+  const handleBuyPackage = (data) => {
+    const url = `${baseApiUrlGetImage}/paypal?providerId=${itemProvinder?._id}&code=${data?.code}`;
+    Linking.openURL(url);
+  };
+
   return (
     <ScrollView style={Layout.fill}>
       <View style={[Layout.fill, { backgroundColor: "#000" }]}>
@@ -38,7 +80,7 @@ const DetailsProduct = () => {
         <View style={[Layout.colCenter]}>
           <Image
             style={{ height: 300, width: widthDimensions }}
-            source={require("@/Components/img/banner.webp")}
+            source={{ uri: `${baseApiUrlGetImage}${itemProvinder?.thumbnail}` }}
           />
         </View>
         <View style={[Gutters.smallHPadding]}>
@@ -47,11 +89,11 @@ const DetailsProduct = () => {
             <Text
               style={[
                 ColorText.white,
-                ColorText.fontWeight500,
-                { fontSize: FontSize.normal },
+                ColorText.fontWeight700,
+                FontSizeResponsive.textSmall,
               ]}
             >
-              Title
+              {itemProvinder?.name}
             </Text>
           </View>
 
@@ -61,107 +103,205 @@ const DetailsProduct = () => {
               style={[
                 ColorText.white,
                 ColorText.fontWeight500,
-                { fontSize: FontSize.normal },
+                FontSizeResponsive.textSmall,
               ]}
             >
-              Description
+              {itemProvinder?.description}
             </Text>
           </View>
 
-          {/* Price */}
+          {/* Feedback */}
+          <View style={[Gutters.smallTMargin]}>
+            <Tooltip
+              label="Click here to read more"
+              openDelay={500}
+              placement="top"
+            >
+              <TouchableOpacity onPress={() => handleFeedbackProvider()}>
+                <IconFeather name="thumbs-up" color={Colors.white} size={20} />
+                <Text
+                  style={[
+                    ColorText.fontWeight500,
+                    FontSizeResponsive.textSmall,
+                    { color: Colors.white },
+                  ]}
+                >
+                  Feed back
+                </Text>
+              </TouchableOpacity>
+            </Tooltip>
+          </View>
+
           <View style={[Gutters.smallTMargin]}>
             <Text
               style={[
                 ColorText.white,
                 ColorText.fontWeight500,
-                { fontSize: FontSize.normal },
-              ]}
-            >
-              Price
-            </Text>
-          </View>
-
-          <View style={[Gutters.smallTMargin]}>
-            <Text
-              style={[
-                ColorText.white,
-                ColorText.fontWeight500,
+                FontSizeResponsive.textSmall,
                 { fontSize: FontSize.normal },
               ]}
             >
               Package
             </Text>
-            <View style={[Gutters.regularTMargin]}>
-              <ScrollView horizontal ref={refReleased}>
-                <TouchableOpacity onPress={() => handleShowListPackage()}>
-                  <Image
-                    style={{
-                      height: 200,
-                      width: widthDimensions / 3,
-                      borderRadius: 8,
-                    }}
-                    source={require("@/Components/img/banner.webp")}
-                  />
-                </TouchableOpacity>
+            <View style={[Gutters.smallTMargin]}>
+              <ScrollView
+                horizontal
+                ref={refReleased}
+                showsHorizontalScrollIndicator={false}
+              >
+                {itemProvinder?.packages?.length > 0 &&
+                  itemProvinder?.packages.map((itemPackge) => (
+                    <View>
+                      <View
+                        style={{
+                          height: 300,
+                          width: widthDimensions / 2,
+                          borderRadius: 8,
+                          backgroundColor: Colors.secondaryBackground,
+                          marginRight: 3,
+                        }}
+                      >
+                        <Text
+                          style={[
+                            Gutters.smallTMargin,
+                            FontSizeResponsive.textSmall,
+                            { color: Colors.white, textAlign: "center" },
+                          ]}
+                        >
+                          {itemPackge?.name}
+                        </Text>
+
+                        <View
+                          style={[
+                            Layout.rowHCenter,
+                            Gutters.regularHPadding,
+                            Gutters.regularTMargin,
+                            { justifyContent: "space-between" },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              ColorText.fontWeight500,
+                              { color: Colors.white },
+                            ]}
+                          >
+                            {itemPackge?.equipment}
+                          </Text>
+                          <IconIonic
+                            name="checkmark-circle"
+                            color={Colors.primary}
+                            size={18}
+                          />
+                        </View>
+
+                        <View
+                          style={[
+                            Layout.rowHCenter,
+                            Gutters.regularHPadding,
+                            Gutters.regularTMargin,
+                            ColorText.fontWeight500,
+                            { justifyContent: "space-between" },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              { color: Colors.white },
+                            ]}
+                          >
+                            {itemPackge?.resolution}
+                          </Text>
+                          <IconIonic
+                            name="checkmark-circle"
+                            color={Colors.primary}
+                            size={18}
+                          />
+                        </View>
+
+                        <View
+                          style={[
+                            Layout.rowHCenter,
+                            Gutters.regularHPadding,
+                            Gutters.regularTMargin,
+                            ColorText.fontWeight500,
+                            { justifyContent: "space-between" },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              { color: Colors.white },
+                            ]}
+                          >
+                            Number Of Equipment
+                          </Text>
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              ColorText.fontWeight500,
+                              { color: Colors.primary },
+                            ]}
+                          >
+                            {itemPackge?.numberOfEquipment}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={[
+                            Layout.rowHCenter,
+                            Gutters.regularHPadding,
+                            Gutters.regularTMargin,
+                            { justifyContent: "space-between" },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              ColorText.fontWeight500,
+                              { color: Colors.white },
+                            ]}
+                          >
+                            Price
+                          </Text>
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              ColorText.fontWeight500,
+                              { color: Colors.primary },
+                            ]}
+                          >
+                            {itemPackge?.price} $
+                          </Text>
+                        </View>
+
+                        <View style={{ marginTop: 3 }}>
+                          <TouchableOpacity
+                            style={{
+                              backgroundColor: Colors.primary,
+                              marginRight: 3,
+                              marginTop: 5,
+                              borderRadius: 8,
+                            }}
+                            onPress={() => handleBuyPackage(itemPackge)}
+                          >
+                            <Text
+                              style={[
+                                Gutters.regularHPadding,
+                                Gutters.smallVPadding,
+                                FontSizeResponsive.textSmall,
+                                ColorText.fontWeight500,
+                                { textAlign: "center", color: Colors.white },
+                              ]}
+                            >
+                              BUY
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
               </ScrollView>
-            </View>
-          </View>
-
-          <View
-            style={[
-              Gutters.smallTMargin,
-              Layout.rowHCenter,
-              { justifyContent: "space-around" },
-            ]}
-          >
-            {/* Package */}
-            {/* NORMAL */}
-            <View>
-              <Text style={{ color: Colors.white }}>NORMAL</Text>
-              <View style={[Layout.rowHCenter]}>
-                <Text style={{ color: Colors.white }}>Options1</Text>
-                <Text style={[Gutters.regularLMargin, { color: Colors.white }]}>
-                  OK
-                </Text>
-              </View>
-              <View>
-                <TouchableOpacity style={{ backgroundColor: "#fff" }}>
-                  <Text
-                    style={[
-                      Gutters.regularHPadding,
-                      Gutters.regularVPadding,
-
-                      { textAlign: "center" },
-                    ]}
-                  >
-                    BUY
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            {/* PRENIUM */}
-            <View>
-              <Text style={{ color: Colors.white }}>PRENIUM</Text>
-              <View style={[Layout.rowHCenter]}>
-                <Text style={{ color: Colors.white }}>Options1</Text>
-                <Text style={[Gutters.regularLMargin, { color: Colors.white }]}>
-                  OK
-                </Text>
-              </View>
-              <View>
-                <TouchableOpacity style={{ backgroundColor: "#fff" }}>
-                  <Text
-                    style={[
-                      Gutters.regularHPadding,
-                      Gutters.regularVPadding,
-
-                      { textAlign: "center" },
-                    ]}
-                  >
-                    BUY
-                  </Text>
-                </TouchableOpacity>
-              </View>
             </View>
           </View>
 
@@ -170,22 +310,110 @@ const DetailsProduct = () => {
               style={[
                 ColorText.white,
                 ColorText.fontWeight500,
-                { fontSize: FontSize.normal },
+                Gutters.smallBMargin,
+                FontSizeResponsive.textSmall,
               ]}
             >
-              Danh sách đi kèm
+              List Movie
             </Text>
-            <ScrollView>
-              <TouchableOpacity onPress={() => handleShowListPackage()}>
-                <Image
-                  style={{
-                    height: 200,
-                    width: widthDimensions / 3,
-                    borderRadius: 8,
-                  }}
-                  source={require("@/Components/img/banner.webp")}
-                />
-              </TouchableOpacity>
+            <ScrollView horizontal showsHorizontalScrollIndicato={false}>
+              {Array.isArray(dataListProductByProvinder) &&
+                dataListProductByProvinder.map((productByProvider) => {
+                  return (
+                    <View
+                      style={styles.container}
+                      key={`listProvinder_${productByProvider?._id}`}
+                    >
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("MOVIE_DETAILS")}
+                      >
+                        <Image
+                          style={[
+                            {
+                              height: 150,
+                              width: widthDimensions / 1.5,
+                              borderRadius: 8,
+                            },
+                          ]}
+                          source={{
+                            uri: `${baseApiUrlGetImage}${productByProvider.thumbnail}`,
+                          }}
+                        />
+                        <View style={styles.iconContainer}>
+                          <IconIonic
+                            name="play-circle-outline"
+                            size={35}
+                            color={Colors.white}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                      <View style={[Gutters.smallTMargin]}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={[
+                            ColorText.fontWeight700,
+                            FontSizeResponsive.textSmall,
+                            {
+                              color: Colors.white,
+                              maxWidth: widthDimensions / 1.5,
+                            },
+                          ]}
+                        >
+                          {productByProvider?.name}
+                        </Text>
+                      </View>
+                      <View style={[Gutters.smallTMargin]}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={[
+                            ColorText.fontWeight500,
+                            FontSizeResponsive.textSmall,
+                            {
+                              color: Colors.white,
+                              maxWidth: widthDimensions / 1.5,
+                            },
+                          ]}
+                        >
+                          {productByProvider?.description}
+                        </Text>
+                      </View>
+                      <View style={[Gutters.smallTMargin]}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={[
+                            ColorText.fontWeight500,
+                            FontSizeResponsive.textSmall,
+                            {
+                              color: Colors.primary,
+                              maxWidth: widthDimensions / 1.5,
+                            },
+                          ]}
+                        >
+                          {productByProvider?.actor}
+                        </Text>
+                      </View>
+                      <View style={[Gutters.smallTMargin]}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={[
+                            ColorText.fontWeight500,
+                            FontSizeResponsive.textSmall,
+                            {
+                              color: Colors.white,
+                              maxWidth: widthDimensions / 1.5,
+                            },
+                          ]}
+                        >
+                          {productByProvider?.category}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
             </ScrollView>
           </View>
         </View>
@@ -193,5 +421,29 @@ const DetailsProduct = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  image: {
+    width: 200,
+    height: 200,
+  },
+  iconContainer: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#000",
+    opacity: 0.5,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 99,
+  },
+});
 
 export default DetailsProduct;

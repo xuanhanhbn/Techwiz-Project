@@ -1,26 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   ActivityIndicator,
   Text,
   TextInput,
   Pressable,
-} from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { userActions, makeSelectUser } from '../userSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { yupResolver } from '@hookform/resolvers/yup';
-// import * as yup from 'yup';
-import IconFeather from 'react-native-vector-icons/Feather';
-import DatePicker from 'react-native-date-picker';
-import { useTheme } from '@/Hooks';
-import moment from 'moment';
-import { updateUserSchema } from '../constants';
-// import { useFocusEffect } from '@react-navigation/native';
-import styles from '../style';
+} from "react-native";
+import { useForm, Controller } from "react-hook-form";
+import { userActions, makeSelectUser } from "../userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { yupResolver } from "@hookform/resolvers/yup";
+import IconFeather from "react-native-vector-icons/Feather";
+import DatePicker from "react-native-date-picker";
+import { useTheme } from "@/Hooks";
+import moment from "moment";
+import { updateUserSchema } from "../constants";
+import styles from "../style";
 
-const UpdateUserModal = props => {
+const UpdateUserModal = (props) => {
   const { userInfo, handleShowModal, isLoading } = props;
   const {
     control,
@@ -29,9 +27,9 @@ const UpdateUserModal = props => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      displayName: '',
-      email: '',
-      phoneNumber: '',
+      name: "",
+      email: "",
+      phoneNumber: "",
       birthday: null,
     },
     resolver: yupResolver(updateUserSchema),
@@ -39,45 +37,37 @@ const UpdateUserModal = props => {
   const dispatch = useDispatch();
   const { Gutters, Layout, Colors, ColorText } = useTheme();
 
-  // const updateUserDataRequest = {
-  //   id: data.id,
-  //   displayName: data.displayName,
-  //   email: data.email,
-  //   phoneNumber: data.phoneNumber,
-  //   birthday: data.birthday,
-  // };
-
-  // const userData = useSelector(makeSelectUser);
-  // const { isLoading } = userData;
-
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(null);
 
   const setDefaultValue = () => {
-    setValue('displayName', userInfo?.displayName);
-    setValue('email', userInfo?.email);
-    setValue('phoneNumber', userInfo?.phoneNumber);
-    setValue('birthday', userInfo?.birthday);
+    setValue("name", userInfo?.name);
+    setValue("email", userInfo?.email);
+    setValue("phoneNumber", userInfo?.tel);
+    setValue("birthday", userInfo?.birthday);
   };
 
   useEffect(() => {
     if (userInfo) {
       setDefaultValue();
-      if (userInfo?.birthday){
-        setDate(new Date(userInfo.birthday));
+      if (userInfo?.birthday) {
+        setDate(new Date(userInfo?.birthday));
       }
     }
   }, [userInfo]);
 
-  const onSubmit = dataSubmit => {
-    const dataRequest = { ...dataSubmit, id: userInfo.id };
-    dispatch(userActions.updateUser(dataRequest));
-    // console.log(dataRequest);
+  const onSubmit = (dataSubmit) => {
+    const dataRequest = { ...dataSubmit };
+    console.log("dataRequest: ", dataRequest);
+    // dispatch(userActions.updateUser(dataRequest));
   };
 
   return (
     <View
-      style={[styles.container, { backgroundColor: Colors.modalBackground }]}
+      style={[
+        styles.container,
+        { backgroundColor: Colors.secondaryBackground },
+      ]}
     >
       <View
         style={[
@@ -86,133 +76,25 @@ const UpdateUserModal = props => {
           Gutters.smallTMargin,
         ]}
       >
-        <Text style={[styles.title, { color: Colors.text }]}>
-          Chỉnh sửa hồ sơ
+        <Text style={[styles.title, { color: Colors.white }]}>
+          Edit Profile
         </Text>
       </View>
-      <View style={[Gutters.regularVPadding, styles.borderBottom]}>
-        <Text style={styles.greyText}>TÊN TÀI KHOẢN</Text>
-        <Text style={{ color: Colors.text }}>{userInfo?.username}</Text>
-      </View>
+
       <View style={[styles.borderBottom, Gutters.largeBPadding]}>
-        <Text style={[Gutters.regularTMargin, { color: Colors.text }]}>Tên người dùng</Text>
+        <Text style={[Gutters.regularTMargin, styles.greyText]}>Email</Text>
         <View
           style={[
             styles.inputContainer,
             Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            { backgroundColor: "#ccc", borderRadius: 8 },
           ]}
         >
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={[styles.input, { color: Colors.text }]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-                placeholderTextColor={Colors.gray}
-              />
-            )}
-            name="displayName"
-          />
-        </View>
-        {errors.displayName && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.displayName.message}
-          </Text>
-        )}
-        <Text style={[Gutters.regularTMargin, { color: Colors.text }]}>Ngày sinh</Text>
-        <Pressable
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
-          ]}
-          onPress={() => setOpen(true)}
-        >
-          {/* <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={moment(value).format("DD/MM/YYYY")}
-                  autoCapitalize="none"
-                  // editable={false}
-                />
-              )}
-              name="birthday"
-              style={styles.controller}
-            /> */}
-          <Text style={[{ fontWeight: '400' }, { color: Colors.text }]}>
-            {date ? moment(date).format('DD/MM/YYYY') : ''}
-          </Text>
-          <IconFeather name="calendar" size={20} style={styles.orangeIcon} />
-        </Pressable>
-        <DatePicker
-          modal
-          open={open}
-          date={date || new Date()}
-          onConfirm={dateData => {
-            setOpen(false);
-            setValue('birthday', moment(dateData).format('YYYY-MM-DD'));
-            setDate(dateData);
-            // console.log(date);
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-          mode="date"
-          maximumDate={new Date()}
-        />
-        {errors.birthday && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.birthday.message}
-          </Text>
-        )}
-        <Text style={[Gutters.regularTMargin, { color: Colors.text }]}>Số điện thoại</Text>
-        <View
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
-          ]}
-        >
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, { color: Colors.text }]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-              />
-            )}
-            name="phoneNumber"
-          />
-        </View>
-        {errors.phoneNumber && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.phoneNumber.message}
-          </Text>
-        )}
-        <Text style={[Gutters.regularTMargin, { color: Colors.text }]}>Email</Text>
-        <View
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
-          ]}
-        >
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, { color: Colors.gray }]}
+                style={[{ color: Colors.text }]}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -228,7 +110,102 @@ const UpdateUserModal = props => {
             {errors.email.message}
           </Text>
         )}
+
+        <Text style={[Gutters.regularTMargin, styles.greyText]}>Full Name</Text>
+        <View
+          style={[
+            styles.inputContainer,
+            Gutters.middleTMargin,
+            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+          ]}
+        >
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[styles.input, { color: Colors.white }]}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                autoCapitalize="none"
+                placeholderTextColor={Colors.white}
+              />
+            )}
+            name="name"
+          />
+        </View>
+        {errors.name && (
+          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+            {errors.name.message}
+          </Text>
+        )}
+
+        <Text style={[Gutters.regularTMargin, styles.greyText]}>Birth Day</Text>
+        <Pressable
+          style={[
+            styles.inputContainer,
+            Gutters.middleTMargin,
+            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+          ]}
+          onPress={() => setOpen(true)}
+        >
+          <Text style={[{ fontWeight: "400" }, { color: Colors.white }]}>
+            {date ? moment(date).format("DD/MM/YYYY") : ""}
+          </Text>
+          <IconFeather name="calendar" size={20} style={styles.orangeIcon} />
+        </Pressable>
+        <DatePicker
+          modal
+          open={open}
+          date={date || new Date()}
+          onConfirm={(dateData) => {
+            setOpen(false);
+            setValue("birthday", moment(dateData).format("YYYY-MM-DD"));
+            setDate(dateData);
+            // console.log(date);
+          }}
+          onCancel={() => {
+            setOpen(false);
+          }}
+          mode="date"
+          maximumDate={new Date()}
+        />
+        {errors.birthday && (
+          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+            {errors.birthday.message}
+          </Text>
+        )}
+        <Text style={[Gutters.regularTMargin, styles.greyText]}>
+          Phone Number
+        </Text>
+        <View
+          style={[
+            styles.inputContainer,
+            Gutters.middleTMargin,
+            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+          ]}
+        >
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[styles.input, { color: Colors.white }]}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                autoCapitalize="none"
+              />
+            )}
+            name="phoneNumber"
+          />
+        </View>
+        {errors.phoneNumber && (
+          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+            {errors.phoneNumber.message}
+          </Text>
+        )}
       </View>
+
       <View style={[Layout.row, Gutters.regularTPadding]}>
         <Pressable
           style={[
@@ -238,10 +215,10 @@ const UpdateUserModal = props => {
             Gutters.middleVPadding,
             styles.buttonSecondary,
           ]}
-          onPress={() => handleShowModal('generalAccountModal')}
+          onPress={() => handleShowModal("generalAccountModal")}
         >
           <Text style={[ColorText.textPrimary, ColorText.fontWeight700]}>
-            Huỷ
+            Cancel
           </Text>
         </Pressable>
         <Pressable
@@ -258,7 +235,7 @@ const UpdateUserModal = props => {
             <ActivityIndicator size="small" color="#ffffff" />
           ) : (
             <Text style={[ColorText.white, ColorText.fontWeight700]}>
-              Cập nhật
+              Update
             </Text>
           )}
         </Pressable>

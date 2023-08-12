@@ -38,16 +38,16 @@ function* onLogin(data) {
 }
 
 function* onGetUserInfo() {
-  const url = "users/me";
+  const url = "/profile";
   // console.log(data);
   try {
     const response = yield call(getApiUser, url);
-    // console.log('====================================');
-    // console.log('responseGetStepActive', response);
-    // console.log('====================================');
+    // console.log("====================================");
+    // console.log("responseGetStepActive", response);
+    // console.log("====================================");
     if (response?.status === 200) {
-      yield put(loginActions.getUserInfoSuccess(response.data));
-      EncryptedStorage.setItem("userInfo", JSON.stringify(response.data));
+      yield put(loginActions.getUserInfoSuccess(response.data.data));
+      EncryptedStorage.setItem("userInfo", JSON.stringify(response.data.data));
     } else {
       yield put(loginActions.getUserInfoFailed(""));
     }

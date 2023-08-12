@@ -32,7 +32,7 @@ const StartupContainer = () => {
         return "LOGIN";
       }
     }
-    return "Start";
+    return "Main";
   };
 
   const init = async (stepActive) => {
@@ -89,19 +89,15 @@ const StartupContainer = () => {
   const handleGetMe = async () => {
     // console.log('handlegetme');
     try {
-      const url = "users/me";
+      const url = "/profile";
       const res = await getApi(url);
       // debugger
-      if (
-        res?.status === 200 &&
-        res?.data?.status === 1 &&
-        res?.data?.stepActive
-      ) {
-        dispatch(loginActions.getUserInfoSuccess(res.data));
+      if (res?.status === 200) {
+        dispatch(loginActions.getUserInfoSuccess(res.data.data));
         init(res.data.stepActive);
-        handleSetAttrCrashlytics(res.data);
+        // handleSetAttrCrashlytics(res.data);
         // Chuyển đối tượng thành chuỗi JSON
-        const jsonUser = JSON.stringify(res.data);
+        const jsonUser = JSON.stringify(res.data.data);
         // Lưu trữ dữ liệu nhạy cảm vào Keychain
         await EncryptedStorage.setItem("userInfo", jsonUser);
       } else {

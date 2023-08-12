@@ -188,13 +188,13 @@ const Setting = () => {
   };
 
   const handleOpenConfirmLogout = () => {
-    Alert.alert("Bạn có chắc chắn muốn đăng xuất không?", "", [
+    Alert.alert("Are you sure you want to log out?", "", [
       {
-        text: "Huỷ bỏ",
+        text: "Cancel",
         // onPress: () => handleNavigateLogin(),
       },
       {
-        text: "Đồng Ý",
+        text: "Logout",
         onPress: () => handleLogout(),
       },
     ]);
@@ -357,14 +357,9 @@ const Setting = () => {
 
   return (
     <View style={styles.wrapper}>
-      <View
-        style={[
-          styles.topBackground,
-          { backgroundColor: Colors.coloredBackground },
-        ]}
-      />
+      <View style={[styles.topBackground, { backgroundColor: Colors.black }]} />
       <Pressable
-        onPress={() => navigation.goBack()}
+        // onPress={() => navigation.goBack()}
         style={[
           Gutters.largeTMargin,
           Gutters.middleLMargin,
@@ -373,19 +368,27 @@ const Setting = () => {
         ]}
         hitSlop={{ bottom: 20, left: 20, right: 20, top: 20 }} // expand pham vi cua button
       >
-        <IconFeather
+        {/* <IconFeather
           name="chevron-left"
           size={20}
           style={{ color: Colors.text }}
-        />
-        <Text style={[Fonts.titleSmall, Gutters.middleLMargin]}>Cài đặt</Text>
+        /> */}
+        <Text
+          style={[
+            Fonts.titleSmall,
+            Gutters.middleLMargin,
+            { color: Colors.white },
+          ]}
+        >
+          Settings
+        </Text>
       </Pressable>
       <View style={Gutters.regularHPadding}>
         <View
           style={[
             styles.container,
             styles.zIndex1,
-            { backgroundColor: Colors.modalBackground },
+            { backgroundColor: Colors.secondaryBackground },
           ]}
         >
           <View style={[styles.topElements]}>
@@ -395,19 +398,23 @@ const Setting = () => {
               alt="avatar"
             />
             <View style={{ overflow: "hidden" }}>
-              <Text style={[ColorText.textPrimary, ColorText.fontWeight700]}>
-                {userInfo?.displayName}
+              <Text style={[ColorText.white, ColorText.fontWeight700]}>
+                {userInfo?.email}
               </Text>
               <TouchableOpacity
-                onPress={() => copyToClipboard(userInfo?.username)}
+              // onPress={() => copyToClipboard(userInfo?.username)}
               >
                 <View style={styles.boxUserName}>
                   <View style={styles.userName}>
                     <Text
                       numberOfLines={1}
-                      style={[styles.greyText, Gutters.tinyTMargin]}
+                      style={[
+                        Gutters.tinyTMargin,
+                        ColorText.fontWeight700,
+                        { color: Colors.primary },
+                      ]}
                     >
-                      {userInfo?.username}
+                      {userInfo?.name}
                     </Text>
                   </View>
                   <View style={styles.boxIconCopy}>
@@ -415,7 +422,7 @@ const Setting = () => {
                       numberOfLines={1}
                       style={[styles.greyText, Gutters.tinyTMargin]}
                     >
-                      <Icon name="copy-outline" />
+                      {/* <Icon name="copy-outline" /> */}
                     </Text>
                   </View>
                 </View>
@@ -430,18 +437,13 @@ const Setting = () => {
             style={[
               styles.borderBottom,
               Gutters.smallBPadding,
-              { color: Colors.text },
+              { color: Colors.white },
             ]}
           >
-            Tài khoản
+            Account
           </Text>
           {listTitle.map((item) => (
             <TouchableOpacity
-              disabled={
-                userType !== "WEBAPP" && item.type === "changePasswordModal"
-                  ? true
-                  : false
-              }
               style={[
                 Layout.rowHCenter,
                 Layout.justifyContentBetween,
@@ -461,11 +463,7 @@ const Setting = () => {
                   style={[
                     ColorText.fontWeight700,
                     {
-                      color:
-                        userType !== "WEBAPP" &&
-                        item.type === "changePasswordModal"
-                          ? "#ccc"
-                          : Colors.text,
+                      color: Colors.white,
                     },
                   ]}
                 >
@@ -479,13 +477,13 @@ const Setting = () => {
                   color:
                     userType !== "WEBAPP" && item.type === "changePasswordModal"
                       ? "#ccc"
-                      : Colors.text,
+                      : Colors.white,
                 }}
               />
             </TouchableOpacity>
           ))}
           {/* Đăng nhập với biometrics / faceId / touchId */}
-          {getSupportedBiometryType() && (
+          {/* {getSupportedBiometryType() && (
             <View>
               <TouchableOpacity
                 // onPress={() => handlePromptBio()}
@@ -515,7 +513,7 @@ const Setting = () => {
                 </View>
               </TouchableOpacity>
             </View>
-          )}
+          )} */}
           {/* Vô hiệu hoá */}
           <View>
             <TouchableOpacity
@@ -535,8 +533,10 @@ const Setting = () => {
                   size={20}
                   style={[styles.orangeIcon, Gutters.middleRMargin]}
                 />
-                <Text style={[ColorText.fontWeight700, { color: Colors.text }]}>
-                  Xoá tài khoản
+                <Text
+                  style={[ColorText.fontWeight700, { color: Colors.white }]}
+                >
+                  Disable Account
                 </Text>
               </View>
             </TouchableOpacity>
@@ -548,10 +548,10 @@ const Setting = () => {
             style={[
               styles.borderBottom,
               Gutters.smallBPadding,
-              { color: Colors.text },
+              { color: Colors.white },
             ]}
           >
-            Thông tin hỗ trợ
+            Support information
           </Text>
           {listSupport.map((item) => (
             <TouchableOpacity
@@ -570,14 +570,16 @@ const Setting = () => {
                   size={20}
                   style={[styles.orangeIcon, Gutters.middleRMargin]}
                 />
-                <Text style={[ColorText.fontWeight700, { color: Colors.text }]}>
+                <Text
+                  style={[ColorText.fontWeight700, { color: Colors.white }]}
+                >
                   {item.title}
                 </Text>
               </View>
               <IconFeather
                 name="chevron-right"
                 size={20}
-                style={{ color: Colors.text }}
+                style={{ color: Colors.white }}
               />
             </TouchableOpacity>
           ))}
@@ -591,50 +593,13 @@ const Setting = () => {
           ]}
           onPress={() => handlePressLogout()}
         >
-          <Text style={[ColorText.textPrimary, Fonts.textBold]}>Đăng xuất</Text>
+          <Text style={[ColorText.textPrimary, Fonts.textBold]}>Logout</Text>
           <IconFeather
             name="chevron-right"
             size={18}
             style={[styles.orangeIcon, Gutters.tinyLMargin]}
           />
         </TouchableOpacity>
-
-        {/* <Dialog
-        isVisible={visible}
-        onBackdropPress={() => setVisible(false)}
-        overlayStyle={[
-          { backgroundColor: Colors.modalBackground, width: '90%' },
-        ]}
-      >
-        <Text style={[Layout.textAlignCenter, { color: Colors.text }]}>
-          Bạn có chắc chắn muốn đăng xuất không?
-        </Text>
-        <View
-          style={[
-            Layout.row,
-            Layout.justifyContentAround,
-            Gutters.largeTMargin,
-            Gutters.regularHPadding,
-          ]}
-        >
-          <Pressable
-            style={[Gutters.smallVPadding, Gutters.tinyHPadding, Layout.center]}
-            onPress={() => setVisible(false)}
-          >
-            <Text style={[Fonts.textBold, { color: Colors.text }]}>Hủy</Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.buttonPrimary,
-              Gutters.smallVPadding,
-              Gutters.largeHPadding,
-            ]}
-            onPress={() => handleLogout()}
-          >
-            <Text style={[ColorText.white, Fonts.textBold]}>Đăng xuất</Text>
-          </Pressable>
-        </View>
-      </Dialog> */}
 
         {isShowModalDisable && (
           <DisableAccount

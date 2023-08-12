@@ -1,6 +1,6 @@
-import { useColorScheme } from 'react-native';
-import { useSelector } from 'react-redux';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { useColorScheme } from "react-native";
+import { useSelector } from "react-redux";
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import {
   Common,
   Fonts,
@@ -12,16 +12,16 @@ import {
   ColorText,
   Border,
   FontSizeResponsive,
-} from '@/Theme';
+} from "@/Theme";
 
 export default function () {
   // Get the scheme device
   const colorScheme = useColorScheme();
 
   // Get current theme from the store
-  const currentTheme = useSelector(state => state.theme.theme || 'default');
-  const isDark = useSelector(state => state.theme.darkMode);
-  const darkMode = isDark === null ? colorScheme === 'dark' : isDark;
+  const currentTheme = useSelector((state) => state.theme.theme || "default");
+  const isDark = useSelector((state) => state.theme.darkMode);
+  const darkMode = isDark === null ? colorScheme === "dark" : isDark;
   //Select the right theme light theme ({} if not exist)
   const { Variables: themeConfigVars = {}, ...themeConfig } =
     themes[currentTheme] || {};
@@ -33,7 +33,7 @@ export default function () {
   const themeVariables = mergeVariables(
     DefaultVariables,
     themeConfigVars,
-    darkThemeConfigVars,
+    darkThemeConfigVars
   );
 
   // Build the default theme
@@ -58,7 +58,7 @@ export default function () {
     !!darkMode,
     baseTheme,
     formatTheme(themeVariables, themeConfig || {}),
-    formatTheme(themeVariables, darkThemeConfig || {}),
+    formatTheme(themeVariables, darkThemeConfig || {})
   );
 }
 
@@ -113,8 +113,8 @@ const buildTheme = (darkMode, baseTheme, themeConfig, darkThemeConfig) => {
     ...mergeTheme(baseTheme, themeConfig, darkThemeConfig),
     darkMode,
     NavigationTheme: mergeNavigationTheme(
-      darkMode ? DarkTheme : DefaultTheme,
-      baseTheme.NavigationColors,
+      darkMode ? DarkTheme : DarkTheme,
+      baseTheme.NavigationColors
     ),
   };
 };
@@ -137,7 +137,7 @@ const mergeTheme = (baseTheme, theme, darkTheme) => ({
         ...(darkTheme[key] || {}),
       },
     }),
-    {},
+    {}
   ),
 });
 

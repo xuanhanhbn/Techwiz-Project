@@ -47,26 +47,16 @@ const User = ({ route }) => {
   const { Fonts, Gutters, Layout, Colors, ColorText } = useTheme();
   const dispatch = useDispatch();
   const toast = useToast();
-  // const { isOpen, onOpen, onClose } = useDisclose();
 
   const userData = useSelector(makeSelectUser);
   const loginPageData = useSelector(makeSelectLogin);
-  const {
-    isLoading,
-    // userInfo,
-    // accountBalance,
-    isUpdateUserSuccess,
-    isChangePasswordSuccess,
-    // isLogoutSuccess,
-    errorMessage,
-  } = userData;
-  const { userInfo } = loginPageData;
-  // const { userType } = userInfo || ''; // lay ra user Type
-  // console.log('user index page');
+  const userInfo = loginPageData?.userInfo;
 
-  // console.log('====================================');
-  // console.log('errorMessage', errorMessage);
-  // console.log('====================================');
+  const isLoading = userData?.isLoading;
+  const isUpdateUserSuccess = userData?.isUpdateUserSuccess;
+  const isChangePasswordSuccess = userData?.isChangePasswordSuccess;
+  const errorMessage = userData?.errorMessage;
+
   const { type } = route.params;
 
   const [expanded, setExpanded] = useState(false);
@@ -79,8 +69,6 @@ const User = ({ route }) => {
     logoutModal: false,
   });
 
-  // const actionSheetRef = useRef(null);
-
   const handleShowToast = (text) => {
     toast.closeAll();
     return toast.show({
@@ -90,18 +78,9 @@ const User = ({ route }) => {
     });
   };
 
-  // useEffect(() => {
-  //   dispatch(userActions.cleanup())
-  //   dispatch(userActions.getUser())
-  //   // dispatch(userActions.getAccountBalance());
-  // }, [])
-
   useFocusEffect(
     React.useCallback(() => {
-      // dispatch(userActions.cleanup())
       dispatch(loginActions.getUserInfo());
-      // dispatch(userActions.test());
-      // dispatch(userActions.getAccountBalance());
     }, [])
   );
 
@@ -109,19 +88,12 @@ const User = ({ route }) => {
     handleShowModal(type);
   }, [type]);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     dispatch(userActions.cleanup())
-  //     dispatch(userActions.getUser())
-  //     // dispatch(userActions.getAccountBalance());
-  //   }, []),
   // )
 
   useEffect(() => {
     if (isUpdateUserSuccess) {
       dispatch(userActions.cleanup());
       dispatch(loginActions.getUserInfo());
-      // dispatch(userActions.getAccountBalance());
       handleShowModal("generalAccountModal");
       handleShowToast("Cập nhật hồ sơ thành công");
     }
@@ -136,15 +108,6 @@ const User = ({ route }) => {
       handleShowToast("Cập nhật mật khẩu thành công");
     }
   }, [isChangePasswordSuccess]);
-
-  // useEffect(() => {
-  //   if (isLogoutSuccess) {
-  //     dispatch(userActions.cleanup());
-  //     EncryptedStorage.removeItem('loginData');
-  //     navigation.navigate('LOGIN');
-  //     handleShowToast('Đăng xuất thành công');
-  //   }
-  // }, [isLogoutSuccess]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -193,23 +156,12 @@ const User = ({ route }) => {
   const handleLogout = async () => {
     await EncryptedStorage.removeItem("loginData");
     dispatch(userActions.logout());
-    // handleCloseActionSheet()
-    // actionSheetRef.current?.hide()
     handleCloseLogoutModal();
     dispatch(loginActions.cleanup()); // clear dữ liệu của login store
     dispatch(userActions.cleanup());
     navigation.navigate("LOGIN"); // luôn navigate khi người dùng ấn đăng xuất mặc dù api có thành công hay không
     handleShowToast("Đăng xuất thành công");
   };
-
-  // const getRefreshToken = () =>
-  //   (JSON.parse(sessionStorage.getItem("loginData")) &&
-  //     JSON.parse(sessionStorage.getItem("loginData")).refreshToken) ||
-  //   null;
-
-  // const onChangeTheme = ({ theme, darkMode }) => {
-  //   dispatch(changeTheme({ theme, darkMode }))
-  // }
 
   // copy
   const copyToClipboard = async (text) => {
@@ -224,10 +176,7 @@ const User = ({ route }) => {
     >
       <View style={styles.wrapper}>
         <View
-          style={[
-            styles.topBackground,
-            { backgroundColor: Colors.coloredBackground },
-          ]}
+          style={[styles.topBackground, { backgroundColor: Colors.black }]}
         />
         <Pressable
           onPress={() => navigation.goBack()}
@@ -242,7 +191,7 @@ const User = ({ route }) => {
           <IconFeather
             name="chevron-left"
             size={20}
-            style={{ color: Colors.text }}
+            style={{ color: Colors.white }}
           />
         </Pressable>
         <View style={[Gutters.regularHPadding]}>
@@ -250,7 +199,7 @@ const User = ({ route }) => {
             style={[
               styles.container,
               styles.zIndex1,
-              { backgroundColor: Colors.modalBackground },
+              { backgroundColor: Colors.secondaryBackground },
             ]}
           >
             <View
@@ -267,29 +216,35 @@ const User = ({ route }) => {
               />
 
               <View>
-                <Text style={[ColorText.textPrimary, ColorText.fontWeight700]}>
-                  {userInfo?.displayName}
+                <Text style={[ColorText.white, ColorText.fontWeight700]}>
+                  {userInfo?.email}
                 </Text>
-                <TouchableOpacity
-                  onPress={() => copyToClipboard(userInfo?.username)}
-                >
-                  <View style={styles.boxUserName}>
-                    <View style={styles.userName}>
-                      <Text
-                        numberOfLines={1}
-                        style={[styles.greyText, Gutters.tinyTMargin]}
-                      >
-                        {userInfo?.username}
-                      </Text>
-                    </View>
-                    <View>
-                      <Icon name="copy-outline" />
-                    </View>
+                {/* <TouchableOpacity
+                  onPress={() =>
+                    copyToClipboard(userInfo?.profile?.userId?.email)
+                  }
+                > */}
+                <View style={styles.boxUserName}>
+                  <View style={styles.userName}>
+                    <Text
+                      numberOfLines={1}
+                      style={[
+                        Gutters.tinyTMargin,
+                        {
+                          color: Colors.primary,
+                          fontSize: 18,
+                          fontWeight: "600",
+                        },
+                      ]}
+                    >
+                      {userInfo?.name}
+                    </Text>
                   </View>
-                  {/* <Text style={[styles.greyText, Gutters.tinyTMargin]}>
+                </View>
+                {/* <Text style={[styles.greyText, Gutters.tinyTMargin]}>
                     {userInfo?.username} <Icon name="copy-outline" />
                   </Text> */}
-                </TouchableOpacity>
+                {/* </TouchableOpacity> */}
               </View>
             </View>
             <ListItem.Accordion
@@ -299,7 +254,7 @@ const User = ({ route }) => {
                     containerStyle={[
                       Gutters.noneHPadding,
                       Gutters.noneVPadding,
-                      { backgroundColor: Colors.modalBackground },
+                      { backgroundColor: Colors.secondaryBackground },
                     ]}
                   >
                     <IconFeather
@@ -307,7 +262,7 @@ const User = ({ route }) => {
                       size={20}
                       style={styles.orangeIcon}
                     />
-                    <ListItem.Subtitle style={{ color: Colors.text }}>
+                    <ListItem.Subtitle style={{ color: Colors.white }}>
                       {title.title}
                     </ListItem.Subtitle>
                   </ListItem>
@@ -322,20 +277,20 @@ const User = ({ route }) => {
                 Gutters.noneVPadding,
                 Gutters.regularTMargin,
                 Layout.justifyContentBetween,
-                { backgroundColor: Colors.modalBackground },
+                { backgroundColor: Colors.secondaryBackground },
               ]}
-              icon={<IconFeather name="chevron-down" size={20} />}
+              icon={
+                <IconFeather
+                  name="chevron-down"
+                  color={Colors.white}
+                  size={20}
+                />
+              }
             >
               {listTitle
                 .filter((item) => item.title !== title.title)
                 .map((item) => (
                   <ListItem
-                    disabled={
-                      userInfo?.userType !== "WEBAPP" &&
-                      item.type === "changePasswordModal"
-                        ? true
-                        : false
-                    }
                     onPress={() => {
                       setExpanded(false);
                       handleShowModal(item.type);
@@ -344,7 +299,7 @@ const User = ({ route }) => {
                       Gutters.noneHPadding,
                       Gutters.noneBPadding,
                       Gutters.smallTMargin,
-                      { backgroundColor: Colors.modalBackground },
+                      { backgroundColor: Colors.secondaryBackground },
                     ]}
                     key={item.type}
                   >
@@ -355,11 +310,7 @@ const User = ({ route }) => {
                     />
                     <ListItem.Subtitle
                       style={{
-                        color:
-                          userInfo?.userType !== "WEBAPP" &&
-                          item.type === "changePasswordModal"
-                            ? "#ccc"
-                            : Colors.text,
+                        color: Colors.white,
                       }}
                     >
                       {item.title}
@@ -390,11 +341,11 @@ const User = ({ route }) => {
             />
           )}
         </ScrollView>
-        <Dialog
+        {/* <Dialog
           isVisible={isShowModal.logoutModal}
           onBackdropPress={() => handleCloseLogoutModal()}
         >
-          <Text>Bạn có chắc chắn muốn đăng xuất không?</Text>
+          <Text>Are you sure you want to log out?</Text>
           <View
             style={[
               Layout.row,
@@ -411,7 +362,7 @@ const User = ({ route }) => {
               ]}
               onPress={() => handleCloseLogoutModal()}
             >
-              <Text style={[Fonts.textBold]}>Hủy</Text>
+              <Text style={[Fonts.textBold]}>Cancel</Text>
             </Pressable>
             <Pressable
               style={[
@@ -421,10 +372,10 @@ const User = ({ route }) => {
               ]}
               onPress={() => handleLogout()}
             >
-              <Text style={[ColorText.white, Fonts.textBold]}>Đăng xuất</Text>
+              <Text style={[ColorText.white, Fonts.textBold]}>Logout</Text>
             </Pressable>
           </View>
-        </Dialog>
+        </Dialog> */}
       </View>
     </KeyboardAvoidingView>
   );

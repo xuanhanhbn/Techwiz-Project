@@ -5,35 +5,36 @@
  * That allows to change them more easily later on.
  */
 
-import { Dimensions } from 'react-native';
+import { Dimensions } from "react-native";
 
 /**
  * Colors
  */
-const width = Dimensions.get('window').width;
+const width = Dimensions.get("window").width;
 // const height = Dimensions.get('window').height;
 
 export const Colors = {
   // Example colors:
-  transparent: 'rgba(0,0,0,0)',
-  inputBackground: '#FFF7F5',
-  white: '#ffffff',
-  text: '#212529',
-  primary: '#FC5B00',
-  primaryBlack: '#6B6B76',
-  a: '#6D6D6D24',
-  black: '#434343',
-  subBlack: '#9A9A9A',
-  primaryBackground: '#F5881F26',
-  coloredBackground: '#FFF7F5',
-  modalBackground: '#ffffff',
-  success: '#28a745',
-  error: '#dc3545',
-  categoriesText: '#967D6F',
-  gray: '#686868',
-  divider: '#EBE1DB66',
-  secondaryBackground: '#F5881F26',
-  errorBox: '#FEA1A1',
+  transparent: "rgba(0,0,0,0)",
+  inputBackground: "#474747",
+  white: "#ffffff",
+  text: "#212529",
+  primary: "#d64040",
+  primaryBlack: "#6B6B76",
+  a: "#6D6D6D24",
+  black: "#000",
+  subBlack: "#9A9A9A",
+  primaryBackground: "#F5881F26",
+  coloredBackground: "#FFF7F5",
+  modalBackground: "#ffffff",
+  success: "#28a745",
+  error: "#dc3545",
+  categoriesText: "#967D6F",
+  gray: "#686868",
+  divider: "#EBE1DB66",
+  secondaryBackground: "#303030",
+  errorBox: "#FEA1A1",
+  threeBackground: "#282828",
 };
 
 export const NavigationColors = {

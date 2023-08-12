@@ -9,6 +9,8 @@ import {
   DetailProductContainer,
   ListProvinderContainer,
   ListFavoritesListContainer,
+  UserContainer,
+  MovieDetailsContainer,
 } from "@/Containers";
 
 export default [
@@ -47,6 +49,28 @@ export default [
     },
     component: ListProvinderContainer,
     isShowBottom: true,
+  },
+  {
+    name: "MOVIE_DETAILS",
+    title: "Movie Details",
+    key: "MOVIE_DETAILS",
+    path: "/",
+    icon: {
+      type: "FEATHER",
+      name: "user",
+    },
+    component: MovieDetailsContainer,
+  },
+  {
+    name: "USER",
+    title: "Người Dùng",
+    key: "USER",
+    path: "/",
+    icon: {
+      type: "FEATHER",
+      name: "user",
+    },
+    component: UserContainer,
   },
   {
     name: "LIST_FAVORITES",

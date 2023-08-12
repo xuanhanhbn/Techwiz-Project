@@ -21,3 +21,7 @@ export { default as ListFavoritesListContainer } from "./FavoritesList";
 
 // SETTINGS
 export { default as SettingContainer } from "./User/Setting";
+export { default as UserContainer } from "./User";
+
+// MOVIE DETAILS
+export { default as MovieDetailsContainer } from "./ListProduct/components/MovieDetails";

@@ -77,7 +77,6 @@ const LoginPage = ({ route }) => {
     queryKey: ["getMe", accessToken],
     queryFn: async () => {
       const data = await getApiUser("/profile");
-      console.log("dataGetme: ", data);
       if (data) {
         setUserInfo(data.data);
         await EncryptedStorage.setItem("userInfo", JSON.stringify(data.data));
