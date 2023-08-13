@@ -2,12 +2,15 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
+  isSaveProduct: false,
+  isFeedBackProvider: false,
   errorMessage: "",
   dataProvinder: [],
   dataFavorites: [],
   dataDetailProvinder: {},
   dataProgram: [],
   dataListProductByProvinder: [],
+  dataListMovie: [],
 };
 
 const listProductSlice = createSlice({
@@ -86,8 +89,48 @@ const listProductSlice = createSlice({
       state.dataProgram = action.payload || [];
     },
 
+    getListMoive(state) {
+      state.isLoading = true;
+    },
+    getListMovieFailed(state, action) {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    },
+    getListMoiveSuccess(state, action) {
+      state.isLoading = false;
+      state.dataListMovie = action.payload || [];
+    },
+
+    onSaveProduct(state) {
+      state.isLoading = true;
+    },
+    onSaveProductFailed(state, action) {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    },
+    onSaveProductSuccess(state, action) {
+      state.isLoading = false;
+      // state.dataListMovie = action.payload || [];
+      state.isSaveProduct = true;
+    },
+
+    onFeedBackProvider(state) {
+      state.isLoading = true;
+    },
+    onFeedBackProviderFailed(state, action) {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    },
+    onFeedBackProviderSuccess(state, action) {
+      state.isLoading = false;
+      // state.dataListMovie = action.payload || [];
+      state.isFeedBackProvider = true;
+    },
+
     cleanup(state) {
       state.isLoading = false;
+      state.isSaveProduct = false;
+      state.isFeedBackProvider = false;
     },
   },
 });

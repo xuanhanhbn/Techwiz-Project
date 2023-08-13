@@ -21,18 +21,10 @@ const StartupContainer = () => {
   const { loginData } = loginPageData;
 
   const handleRedirect = (stepActive) => {
-    if (loginData.access_token) {
-      if (stepActive === "0") {
-        return "UPDATE_INFO_ACCOUNT";
-      }
-      if (stepActive === "1") {
-        return "ACTIVE_ACCOUNT";
-      }
-      if (stepActive === "2") {
-        return "LOGIN";
-      }
+    if (Object.keys(loginData).length || loginData.length > 0) {
+      return "Main";
     }
-    return "Main";
+    return "Start";
   };
 
   const init = async (stepActive) => {
@@ -95,7 +87,7 @@ const StartupContainer = () => {
       if (res?.status === 200) {
         dispatch(loginActions.getUserInfoSuccess(res.data.data));
         init(res.data.stepActive);
-        // handleSetAttrCrashlytics(res.data);
+        handleSetAttrCrashlytics(res.data);
         // Chuyển đối tượng thành chuỗi JSON
         const jsonUser = JSON.stringify(res.data.data);
         // Lưu trữ dữ liệu nhạy cảm vào Keychain
@@ -117,7 +109,7 @@ const StartupContainer = () => {
     try {
       // thường xử lý khi chưa có dữ liệu login hoặc dữ liệu login lỗi khi call /me(clear dữ liệu của loginData của store sẽ chạy vào đây)
       const loginDataStorage =
-        (await EncryptedStorage.getItem("loginData")) || "{}";
+        (await EncryptedStorage.getItem("loginData")) || "";
 
       // nếu cả storage và trong store không có thì mới call init
       const data = JSON.parse(loginDataStorage);

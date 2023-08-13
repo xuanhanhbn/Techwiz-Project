@@ -15,7 +15,6 @@ import {
 import IconIonic from "react-native-vector-icons/Ionicons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "@/Hooks";
 import { listProductActions, makeSelectListProduct } from "./listProductSlice";
 import { useNavigation } from "@react-navigation/native";
@@ -29,6 +28,7 @@ const ListProduct = () => {
 
   const globalDataProvinder = useSelector(makeSelectListProduct);
   const dataProvinder = globalDataProvinder?.dataProvinder;
+  const dataProgram = globalDataProvinder?.dataProgram || [];
   const isLoading = globalDataProvinder?.isLoading;
   const widthDimensions = Dimensions.get("window").width;
 
@@ -45,10 +45,10 @@ const ListProduct = () => {
 
   const handleGetListProgram = () => {
     const newDataRequest = {
-      page: 0,
+      page: 1,
       limit: 8,
     };
-    dispatch(listProductActions.getListProgram());
+    dispatch(listProductActions.getListProgram(newDataRequest));
   };
 
   const handleGetListFavorites = () => {
@@ -57,7 +57,7 @@ const ListProduct = () => {
 
   useEffect(() => {
     handleGetListProvinder();
-    handleGetListFavorites();
+    // handleGetListFavorites();
     handleGetListProgram();
   }, []);
 
@@ -66,8 +66,8 @@ const ListProduct = () => {
   };
   return (
     <ScrollView
-      ref={refListProvinde}
-      refreshControl={() => handleGetListProvinder()}
+      // ref={refListProvinde}
+      // refreshControl={() => handleGetListProvinder()}
       style={Layout.fill}
     >
       {isLoading ? (
@@ -196,14 +196,20 @@ const ListProduct = () => {
                 </TouchableOpacity> */}
               </View>
               <ScrollView horizontal ref={refReleased}>
-                {Array.isArray(dataProvinder?.data) &&
-                  dataProvinder?.data.length > 0 &&
-                  dataProvinder?.data.map((itemProvinder) => (
+                {Array.isArray(dataProgram) &&
+                  dataProgram.length > 0 &&
+                  dataProgram.map((itemProgram) => (
                     <View
                       style={styles.container}
-                      key={`listProvinder_${itemProvinder?._id}`}
+                      key={`listProvinder_${itemProgram?._id}`}
                     >
-                      <TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("MOVIE_DETAILS", {
+                            productByProvider: itemProgram,
+                          })
+                        }
+                      >
                         <Image
                           style={[
                             Gutters.smallRMargin,
@@ -214,7 +220,7 @@ const ListProduct = () => {
                             },
                           ]}
                           source={{
-                            uri: `${baseApiUrlGetImage}${itemProvinder.thumbnail}`,
+                            uri: `${baseApiUrlGetImage}${itemProgram.thumbnail}`,
                           }}
                         />
                         <View style={styles.iconContainer}>
@@ -227,13 +233,34 @@ const ListProduct = () => {
                       </TouchableOpacity>
                       <View style={[Gutters.smallTMargin]}>
                         <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
                           style={[
                             ColorText.fontWeight700,
                             FontSizeResponsive.textSmall,
-                            { color: Colors.white },
+                            {
+                              color: Colors.white,
+                              maxWidth: widthDimensions / 2,
+                            },
                           ]}
                         >
-                          {itemProvinder?.name}
+                          {itemProgram?.name}
+                        </Text>
+                      </View>
+                      <View style={[Gutters.smallTMargin]}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={[
+                            ColorText.fontWeight700,
+                            FontSizeResponsive.textSmall,
+                            {
+                              color: Colors.white,
+                              maxWidth: widthDimensions / 2,
+                            },
+                          ]}
+                        >
+                          {itemProgram?.description}
                         </Text>
                       </View>
                     </View>

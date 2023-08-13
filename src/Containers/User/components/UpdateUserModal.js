@@ -14,12 +14,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import IconFeather from "react-native-vector-icons/Feather";
 import DatePicker from "react-native-date-picker";
 import { useTheme } from "@/Hooks";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 import moment from "moment";
 import { updateUserSchema } from "../constants";
 import styles from "../style";
 
 const UpdateUserModal = (props) => {
   const { userInfo, handleShowModal, isLoading } = props;
+
   const {
     control,
     handleSubmit,
@@ -34,6 +36,7 @@ const UpdateUserModal = (props) => {
     },
     resolver: yupResolver(updateUserSchema),
   });
+
   const dispatch = useDispatch();
   const { Gutters, Layout, Colors, ColorText } = useTheme();
 
@@ -43,8 +46,11 @@ const UpdateUserModal = (props) => {
   const setDefaultValue = () => {
     setValue("name", userInfo?.name);
     setValue("email", userInfo?.email);
-    setValue("phoneNumber", userInfo?.tel);
+    setValue("tel", userInfo?.tel);
     setValue("birthday", userInfo?.birthday);
+    setValue("address", userInfo?.address);
+    setValue("city", userInfo?.city);
+    setValue("country", userInfo?.country);
   };
 
   useEffect(() => {
@@ -58,8 +64,7 @@ const UpdateUserModal = (props) => {
 
   const onSubmit = (dataSubmit) => {
     const dataRequest = { ...dataSubmit };
-    console.log("dataRequest: ", dataRequest);
-    // dispatch(userActions.updateUser(dataRequest));
+    dispatch(userActions.updateUser(dataRequest));
   };
 
   return (
@@ -69,6 +74,7 @@ const UpdateUserModal = (props) => {
         { backgroundColor: Colors.secondaryBackground },
       ]}
     >
+      <FlashMessage position="top" />
       <View
         style={[
           Gutters.largeBPadding,
@@ -82,128 +88,231 @@ const UpdateUserModal = (props) => {
       </View>
 
       <View style={[styles.borderBottom, Gutters.largeBPadding]}>
-        <Text style={[Gutters.regularTMargin, styles.greyText]}>Email</Text>
-        <View
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: "#ccc", borderRadius: 8 },
-          ]}
-        >
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[{ color: Colors.text }]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-                editable={false}
-              />
-            )}
-            name="email"
-          />
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>Email</Text>
+          <View
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: "#ccc", borderRadius: 8 },
+            ]}
+          >
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[{ color: Colors.text }]}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                  editable={false}
+                />
+              )}
+              name="email"
+            />
+          </View>
+          {errors.email && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.email.message}
+            </Text>
+          )}
         </View>
-        {errors.email && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.email.message}
-          </Text>
-        )}
 
-        <Text style={[Gutters.regularTMargin, styles.greyText]}>Full Name</Text>
-        <View
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
-          ]}
-        >
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, { color: Colors.white }]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-                placeholderTextColor={Colors.white}
-              />
-            )}
-            name="name"
-          />
-        </View>
-        {errors.name && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.name.message}
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>
+            Full Name
           </Text>
-        )}
+          <View
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            ]}
+          >
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, { color: Colors.white }]}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                  placeholderTextColor={Colors.white}
+                />
+              )}
+              name="name"
+            />
+          </View>
+          {errors.name && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.name.message}
+            </Text>
+          )}
+        </View>
 
-        <Text style={[Gutters.regularTMargin, styles.greyText]}>Birth Day</Text>
-        <Pressable
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
-          ]}
-          onPress={() => setOpen(true)}
-        >
-          <Text style={[{ fontWeight: "400" }, { color: Colors.white }]}>
-            {date ? moment(date).format("DD/MM/YYYY") : ""}
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>
+            Birth Day
           </Text>
-          <IconFeather name="calendar" size={20} style={styles.orangeIcon} />
-        </Pressable>
-        <DatePicker
-          modal
-          open={open}
-          date={date || new Date()}
-          onConfirm={(dateData) => {
-            setOpen(false);
-            setValue("birthday", moment(dateData).format("YYYY-MM-DD"));
-            setDate(dateData);
-            // console.log(date);
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-          mode="date"
-          maximumDate={new Date()}
-        />
-        {errors.birthday && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.birthday.message}
-          </Text>
-        )}
-        <Text style={[Gutters.regularTMargin, styles.greyText]}>
-          Phone Number
-        </Text>
-        <View
-          style={[
-            styles.inputContainer,
-            Gutters.middleTMargin,
-            { backgroundColor: Colors.inputBackground, borderRadius: 8 },
-          ]}
-        >
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, { color: Colors.white }]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-              />
-            )}
-            name="phoneNumber"
+          <Pressable
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            ]}
+            onPress={() => setOpen(true)}
+          >
+            <Text style={[{ fontWeight: "400" }, { color: Colors.white }]}>
+              {date ? moment(date).format("DD/MM/YYYY") : ""}
+            </Text>
+            <IconFeather name="calendar" size={20} style={styles.orangeIcon} />
+          </Pressable>
+          <DatePicker
+            modal
+            open={open}
+            date={date || new Date()}
+            onConfirm={(dateData) => {
+              setOpen(false);
+              setValue("birthday", moment(dateData).format("YYYY-MM-DD"));
+              setDate(dateData);
+              // console.log(date);
+            }}
+            onCancel={() => {
+              setOpen(false);
+            }}
+            mode="date"
+            maximumDate={new Date()}
           />
+          {errors.birthday && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.birthday.message}
+            </Text>
+          )}
         </View>
-        {errors.phoneNumber && (
-          <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-            {errors.phoneNumber.message}
+
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>
+            Phone Number
           </Text>
-        )}
+          <View
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            ]}
+          >
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, { color: Colors.white }]}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                />
+              )}
+              name="tel"
+            />
+          </View>
+          {errors.tel && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.tel.message}
+            </Text>
+          )}
+        </View>
+
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>Address</Text>
+          <View
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            ]}
+          >
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, { color: Colors.white }]}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                />
+              )}
+              name="address"
+            />
+          </View>
+          {errors.address && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.address.message}
+            </Text>
+          )}
+        </View>
+
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>City</Text>
+          <View
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            ]}
+          >
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, { color: Colors.white }]}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                />
+              )}
+              name="city"
+            />
+          </View>
+          {errors.city && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.city.message}
+            </Text>
+          )}
+        </View>
+
+        <View>
+          <Text style={[Gutters.regularTMargin, styles.greyText]}>Country</Text>
+          <View
+            style={[
+              styles.inputContainer,
+              Gutters.middleTMargin,
+              { backgroundColor: Colors.inputBackground, borderRadius: 8 },
+            ]}
+          >
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, { color: Colors.white }]}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                />
+              )}
+              name="country"
+            />
+          </View>
+          {errors.country && (
+            <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
+              {errors.country.message}
+            </Text>
+          )}
+        </View>
       </View>
 
       <View style={[Layout.row, Gutters.regularTPadding]}>

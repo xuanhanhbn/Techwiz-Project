@@ -155,7 +155,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "0.0.1"
+        versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         setProperty("archivesBaseName", "$versionCode-$versionName-star")
         if (isNewArchitectureEnabled()) {
@@ -236,10 +236,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('star-release.keystore')
-            storePassword 'Enao@123'
+            storeFile file('stream-master.jks')
+            storePassword 'techwiz-2023'
             keyAlias 'star'
-            keyPassword 'Enao@123'
+            keyPassword 'techwiz-2023'
         }
         debug {
             storeFile file('debug.keystore')
@@ -304,11 +304,16 @@ android {
     }
 }
 
-// plugins {
-//   id 'com.android.application'
-//   // Add the Google services Gradle plugin
-//   id 'com.google.gms.google-services'
-// }
+//plugins {
+//  // Add the dependency for the Google services Gradle plugin
+//  id 'com.google.gms.google-services' version '4.3.15' apply false
+//
+//}
+//plugins {
+//  id 'com.android.application'
+//  // Add the Google services Gradle plugin
+//  id 'com.google.gms.google-services'
+//}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -334,8 +339,8 @@ dependencies {
     // implementation 'com.facebook.android:facebook-login:latest.release'
     //  FIRE BASE
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:30.1.0')
-    // implementation 'com.google.firebase:firebase-analytics'
+implementation platform('com.google.firebase:firebase-bom:32.2.2')
+    implementation 'com.google.firebase:firebase-analytics'
     // implementation 'com.google.firebase:firebase-crashlytics:18.2.0'
 
     // END FIRE BASE

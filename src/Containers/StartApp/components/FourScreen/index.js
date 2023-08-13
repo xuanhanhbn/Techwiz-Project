@@ -22,11 +22,18 @@ function FourScreen() {
         ]}
       >
         <Image
-          style={[Gutters.regularBMargin, { width: widthDimensions }]}
+          style={[
+            Gutters.regularBMargin,
+            { width: widthDimensions, height: heightDimensions / 2.5 },
+          ]}
           source={require("@/Components/img/4.png")}
         />
         <View>
-          <Text style={[Colors.white, { zIndex: 99 }]}>Trai nghiem ngay</Text>
+          <Text
+            style={[{ color: Colors.white }, FontSizeResponsive.textDefault]}
+          >
+            Log in to experience now.
+          </Text>
         </View>
       </View>
     </View>

@@ -11,20 +11,10 @@ import { Card } from "@rneui/themed";
 import { useTheme } from "@/Hooks";
 import { useNavigation } from "@react-navigation/native";
 import imageBlank from "@/Components/img/blankImage.png";
-import MenuSaveProduct from "../../MenuSaveProduct";
 
 const width = Dimensions.get("window").width;
 const DisplayTypeMenu = forwardRef((props, ref) => {
-  const {
-    value,
-    listDetails,
-    dataRequest,
-    item,
-    handleRefresh,
-    onLoadMoreData,
-    type,
-    handleBeforeSearch,
-  } = props;
+  const { value, handleRefresh, onLoadMoreData, type } = props;
   const navigation = useNavigation();
   const { Fonts, Gutters, Layout, ColorText, darkMode, FontSize, Colors } =
     useTheme();
@@ -55,26 +45,15 @@ const DisplayTypeMenu = forwardRef((props, ref) => {
                     <Card.Image
                       style={[{ height: width * 0.3, borderRadius: 5 }]}
                       source={
-                        item.urlImages.length > 0
-                          ? {
-                              uri: item.urlImages[0],
-                            }
-                          : imageBlank
+                        imageBlank
+                        // item.urlImages.length > 0
+                        //   ? {
+                        //       uri: item.urlImages[0],
+                        //     }
+                        //   : imageBlank
                       }
                       alt="image"
-                    >
-                      <View style={{ width: "32%" }}>
-                        <MenuSaveProduct
-                          value={value}
-                          listDetails={listDetails}
-                          item={item}
-                          type={type}
-                          dataRequest={dataRequest}
-                          typeMenu="menu"
-                          handleBeforeSearch={handleBeforeSearch}
-                        />
-                      </View>
-                    </Card.Image>
+                    />
                   </TouchableOpacity>
                 </View>
 
@@ -141,17 +120,12 @@ const DisplayTypeMenu = forwardRef((props, ref) => {
           )}
         />
       ) : (
-        <Text style={{ fontSize: FontSize.small, color: Colors.text }}>
-          Không có kết quả tìm kiếm phù hợp
+        <Text style={{ fontSize: FontSize.small, color: Colors.white }}>
+          No suitable search results.
         </Text>
       )}
     </View>
   );
 });
-
-// BDSMenu.propTypes = {
-//   dispatch: PropTypes.func.isRequired,
-//   // value: PropTypes.func.isRequired,
-// }
 
 export default memo(DisplayTypeMenu);

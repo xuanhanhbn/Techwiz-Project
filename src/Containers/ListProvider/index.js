@@ -23,18 +23,13 @@ function ListProvinder() {
 
   const baseDataRequest = {
     name: "",
-    page: 0,
+    page: 1,
     limit: 8,
   };
 
   const [dataRequest, setDataRequest] = useState(baseDataRequest);
   const [currentData, setCurrentData] = useState([]);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     console.log("focus: ");
-  //   }, [])
-  // );
   useEffect(() => {
     if (dataProvinder) {
       setCurrentData(dataProvinder?.data);
@@ -48,7 +43,7 @@ function ListProvinder() {
   const handleGetData = async (data) => {
     try {
       const { page, limit, name } = data;
-      const url = `/provider/get?limit=${limit}`;
+      const url = `/provider/get?page=${page}&limit=${limit}&name=${name}`;
       const res = await getApiProvider(url, data);
       if (res && res.status === 200) {
         setDataRequest(data);
@@ -73,22 +68,25 @@ function ListProvinder() {
   };
 
   const handleUpdateDataRequest = (data, config) => {
-    if (config.field === "filter") {
+    if (config.field === "name") {
       const newDataRequest = {
         ...dataRequest,
-        filter: data,
+        name: data,
       };
       return setDataRequest(newDataRequest);
     }
     const newDataRequest = {
       ...dataRequest,
-      filter: "",
+      name: "",
     };
     return setDataRequest(newDataRequest);
   };
 
   const handleSearchData = (config) => {
-    console.log("config: ", config);
+    const newDataRequest = {
+      ...dataRequest,
+    };
+    handleGetData(newDataRequest);
   };
 
   const getRightIcon = () => {
@@ -109,11 +107,11 @@ function ListProvinder() {
           style={[FontSizeResponsive.textSmall, { color: Colors.white }]}
           placeholder="Look Provinder"
           placeholderTextColor={Colors.white}
-          value={dataRequest.filter}
+          value={dataRequest.name}
           onChangeText={(value) =>
-            handleUpdateDataRequest(value, { field: "filter" })
+            handleUpdateDataRequest(value, { field: "name" })
           }
-          onEndEditing={() => handleSearchData({ field: "filter" })}
+          onEndEditing={() => handleSearchData({ field: "name" })}
           h={50}
           InputRightElement={getRightIcon()}
           backgroundColor={Colors.inputBackground}

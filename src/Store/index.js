@@ -41,6 +41,17 @@ import notificationReducer from "@/Containers/Notifications/slice";
 import listProductSaga from "@/Containers/ListProduct/listProductSaga";
 import listProductReducer from "@/Containers/ListProduct/listProductSlice";
 
+// User
+import userSaga from "@/Containers/User/userSaga";
+import userReducer from "@/Containers/User/userSlice";
+
+// Favorites
+import favoritesSaga from "@/Containers/FavoritesList/favoritesSaga";
+import favoritesReducer from "@/Containers/FavoritesList/favoritesSlice";
+
+// Account
+import accountReducer from "@/Containers/Account/accountSlice";
+import accountSaga from "@/Containers/Account/accountSaga";
 // registry reducer
 const reducers = combineReducers({
   theme,
@@ -52,6 +63,9 @@ const reducers = combineReducers({
   activeAccount: activeAccountReducer,
   notification: notificationReducer,
   listProduct: listProductReducer,
+  user: userReducer,
+  favorites: favoritesReducer,
+  account: accountReducer,
 });
 
 // registry sagas
@@ -64,6 +78,9 @@ function* rootSaga() {
     activeAccountSaga(),
     notificationSaga(),
     listProductSaga(),
+    userSaga(),
+    favoritesSaga(),
+    accountSaga(),
   ]);
 }
 

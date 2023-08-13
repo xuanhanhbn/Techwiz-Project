@@ -69,16 +69,17 @@ const ActiveAccount = ({ route }) => {
   const getDataLogin = useSelector(makeSelectLogin);
   const { loginData, userInfo } = getDataLogin;
   const globalDataRegister = useSelector(makeSelectRegister);
-  const activeCodeRegister = globalDataRegister?.activeCodeRegister?.otp || "";
+  const activeCodeRegister =
+    globalDataRegister?.activeCodeRegister?.data?.resetToken || "";
 
   // Xử lý khi ấn submit
   const onSubmit = (data) => {
-    console.log("activeCodeRegister: ", activeCodeRegister);
-    if (data !== activeCodeRegister) {
+    if (Number(data?.activeCode) !== activeCodeRegister) {
       setError("activeCode", {
         type: "activeCode",
         message: "Incorrect activation code",
       });
+      return;
     }
     const newDataRequest = {
       ...dataRequestUpdate,
@@ -205,9 +206,9 @@ const ActiveAccount = ({ route }) => {
           color="white"
         />
         <View>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          {/* <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={{ color: Colors.white }}>Back</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={styles.homeContainer}>
           <View style={[styles.registerContainer]}>

@@ -17,9 +17,11 @@ import {
   listProductActions,
   makeSelectListProduct,
 } from "../../listProductSlice";
-import { Tooltip } from "native-base";
+import { Tooltip } from "@rneui/themed";
 import { baseApiUrlGetImage } from "@/utils/constants";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import EncryptedStorage from "react-native-encrypted-storage";
+import { Divider } from "native-base";
 
 const DetailsProduct = (route) => {
   const itemProvinder = route?.route?.params?.itemProvinder;
@@ -54,35 +56,111 @@ const DetailsProduct = (route) => {
     const idProvinder = itemProvinder?._id;
     dispatch(listProductActions.getListProductByProvider(idProvinder));
   };
-
-  useEffect(() => {
-    handleGetData();
-    handleGetProductByProvider();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      handleGetData();
+      handleGetProductByProvider();
+    }, [])
+  );
 
   const handleShowListPackage = () => {
     console.log("list");
   };
-  const handleFeedbackProvider = () => {
-    console.log("feedback");
-    setIsOpenToolTip(!isOpenToolTip);
+
+  const handleFeedbackProvider = (config) => {
+    const providerId = itemProvinder?._id;
+
+    if (config.field === "not") {
+      const newDataRequest = {
+        providerId: providerId,
+        content: "1",
+      };
+      return dispatch(listProductActions.onFeedBackProvider(newDataRequest));
+    }
+    if (config.field === "like") {
+      const newDataRequest = {
+        providerId: providerId,
+        content: "2",
+      };
+      return dispatch(listProductActions.onFeedBackProvider(newDataRequest));
+    }
+    if (config.field === "veryMuch") {
+      const newDataRequest = {
+        providerId: providerId,
+        content: "3",
+      };
+      return dispatch(listProductActions.onFeedBackProvider(newDataRequest));
+    }
   };
 
-  const handleBuyPackage = (data) => {
-    const url = `${baseApiUrlGetImage}/paypal?providerId=${itemProvinder?._id}&code=${data?.code}`;
+  const renderPopover = () => {
+    return (
+      <View style={[Layout.rowHCenter]}>
+        <TouchableOpacity
+          onPress={() => handleFeedbackProvider({ field: "not" })}
+        >
+          <View style={{ alignItems: "center" }}>
+            <IconFeather name="thumbs-down" color={Colors.white} size={20} />
+            <Text
+              style={[FontSizeResponsive.textSmall, { color: Colors.white }]}
+            >
+              Don't like it
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleFeedbackProvider({ field: "like" })}
+        >
+          <View style={{ alignItems: "center", paddingHorizontal: 25 }}>
+            <IconFeather name="thumbs-up" color={Colors.white} size={20} />
+            <Text
+              style={[FontSizeResponsive.textSmall, { color: Colors.white }]}
+            >
+              Like
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleFeedbackProvider({ field: "veryMuch" })}
+        >
+          <View style={{ alignItems: "center" }}>
+            <IconFeather name="heart" color={Colors.white} size={20} />
+            <Text
+              style={[FontSizeResponsive.textSmall, { color: Colors.white }]}
+            >
+              Great!
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const handleBuyPackage = async (data) => {
+    const tokenUser = await EncryptedStorage.getItem("loginData");
+    const trimToken = tokenUser ? tokenUser.slice(1, -1) : "";
+    const url = `${baseApiUrlGetImage}/paypal?providerId=${itemProvinder?._id}&code=${data?.code}&token=${trimToken}`;
+
     Linking.openURL(url);
   };
 
   return (
     <ScrollView style={Layout.fill}>
       <View style={[Layout.fill, { backgroundColor: "#000" }]}>
-        {/* Banner */}
-        <View style={[Layout.colCenter]}>
+        <View>
+          {/* <IconIonic
+            name="chevron-back-outline"
+            size={20}
+            color={Colors.white}
+            style={[Gutters.regularTPadding]}
+          /> */}
           <Image
             style={{ height: 300, width: widthDimensions }}
             source={{ uri: `${baseApiUrlGetImage}${itemProvinder?.thumbnail}` }}
           />
         </View>
+        {/* Banner */}
+        <View style={[Layout.colCenter]} />
         <View style={[Gutters.smallHPadding]}>
           {/* Title */}
           <View style={[Gutters.smallTMargin]}>
@@ -113,22 +191,28 @@ const DetailsProduct = (route) => {
           {/* Feedback */}
           <View style={[Gutters.smallTMargin]}>
             <Tooltip
-              label="Click here to read more"
-              openDelay={500}
-              placement="top"
+              visible={isOpenToolTip}
+              onOpen={() => {
+                setIsOpenToolTip(true);
+              }}
+              onClose={() => {
+                setIsOpenToolTip(false);
+              }}
+              popover={renderPopover()}
+              height={60}
+              width={250}
+              withPointer={false}
             >
-              <TouchableOpacity onPress={() => handleFeedbackProvider()}>
-                <IconFeather name="thumbs-up" color={Colors.white} size={20} />
-                <Text
-                  style={[
-                    ColorText.fontWeight500,
-                    FontSizeResponsive.textSmall,
-                    { color: Colors.white },
-                  ]}
-                >
-                  Feed back
-                </Text>
-              </TouchableOpacity>
+              <IconFeather name="thumbs-up" color={Colors.white} size={20} />
+              <Text
+                style={[
+                  ColorText.fontWeight500,
+                  FontSizeResponsive.textSmall,
+                  { color: Colors.white },
+                ]}
+              >
+                Feed back
+              </Text>
             </Tooltip>
           </View>
 
@@ -136,7 +220,7 @@ const DetailsProduct = (route) => {
             <Text
               style={[
                 ColorText.white,
-                ColorText.fontWeight500,
+                ColorText.fontWeight700,
                 FontSizeResponsive.textSmall,
                 { fontSize: FontSize.normal },
               ]}
@@ -165,17 +249,19 @@ const DetailsProduct = (route) => {
                           style={[
                             Gutters.smallTMargin,
                             FontSizeResponsive.textSmall,
+                            ColorText.fontWeight700,
                             { color: Colors.white, textAlign: "center" },
                           ]}
                         >
                           {itemPackge?.name}
                         </Text>
+                        <Divider my={2} />
 
                         <View
                           style={[
                             Layout.rowHCenter,
                             Gutters.regularHPadding,
-                            Gutters.regularTMargin,
+
                             { justifyContent: "space-between" },
                           ]}
                         >
@@ -194,12 +280,13 @@ const DetailsProduct = (route) => {
                             size={18}
                           />
                         </View>
+                        <Divider my={2} />
 
                         <View
                           style={[
                             Layout.rowHCenter,
                             Gutters.regularHPadding,
-                            Gutters.regularTMargin,
+
                             ColorText.fontWeight500,
                             { justifyContent: "space-between" },
                           ]}
@@ -218,12 +305,13 @@ const DetailsProduct = (route) => {
                             size={18}
                           />
                         </View>
+                        <Divider my={2} />
 
                         <View
                           style={[
                             Layout.rowHCenter,
                             Gutters.regularHPadding,
-                            Gutters.regularTMargin,
+
                             ColorText.fontWeight500,
                             { justifyContent: "space-between" },
                           ]}
@@ -246,12 +334,13 @@ const DetailsProduct = (route) => {
                             {itemPackge?.numberOfEquipment}
                           </Text>
                         </View>
+                        <Divider my={2} />
 
                         <View
                           style={[
                             Layout.rowHCenter,
                             Gutters.regularHPadding,
-                            Gutters.regularTMargin,
+
                             { justifyContent: "space-between" },
                           ]}
                         >
@@ -267,28 +356,33 @@ const DetailsProduct = (route) => {
                           <Text
                             style={[
                               FontSizeResponsive.textSmall,
-                              ColorText.fontWeight500,
-                              { color: Colors.primary },
+                              ColorText.fontWeight700,
+                              { color: "yellow" },
                             ]}
                           >
                             {itemPackge?.price} $
                           </Text>
                         </View>
+                        <Divider my={2} />
 
-                        <View style={{ marginTop: 3 }}>
+                        <View
+                          style={[
+                            Gutters.smallTMargin,
+                            { justifyContent: "center", alignItems: "center" },
+                          ]}
+                        >
                           <TouchableOpacity
                             style={{
                               backgroundColor: Colors.primary,
-                              marginRight: 3,
                               marginTop: 5,
                               borderRadius: 8,
+                              width: "60%",
                             }}
                             onPress={() => handleBuyPackage(itemPackge)}
                           >
                             <Text
                               style={[
-                                Gutters.regularHPadding,
-                                Gutters.smallVPadding,
+                                Gutters.tinyVPadding,
                                 FontSizeResponsive.textSmall,
                                 ColorText.fontWeight500,
                                 { textAlign: "center", color: Colors.white },
@@ -325,7 +419,11 @@ const DetailsProduct = (route) => {
                       key={`listProvinder_${productByProvider?._id}`}
                     >
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("MOVIE_DETAILS")}
+                        onPress={() =>
+                          navigation.navigate("MOVIE_DETAILS", {
+                            productByProvider,
+                          })
+                        }
                       >
                         <Image
                           style={[

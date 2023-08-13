@@ -138,6 +138,14 @@ const RegisterAccount = () => {
   useEffect(() => {
     const isErrorMessage = globalData.isError;
     const checkError = globalData.dataError || "";
+
+    if (isErrorMessage && checkError === "Email da duoc su dung") {
+      dispatch(registerActions.clear());
+      showMessage({
+        message: "This email has already been used",
+        type: "danger",
+      });
+    }
     if (isErrorMessage && checkError === "internet") {
       dispatch(registerActions.clear());
       showMessage({

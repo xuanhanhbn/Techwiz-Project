@@ -76,13 +76,13 @@ function* onGetListProductByProvider(data) {
   }
 }
 
-function* onGetListProgram() {
-  const url = "/product/get";
+function* onGetListProgram(data) {
+  const { page, limit, ...payload } = data?.payload;
+  const url = `/product/get/?page=${page}&limit=${limit}`;
   try {
     const response = yield call(getApi, url);
-    console.log("res: ", response);
     if (response && response.data && response.status === 200) {
-      yield put(listProductActions.getListProgramSuccess(response.data.data));
+      yield put(listProductActions.getListProgramSuccess(response.data));
     } else {
       yield put(
         listProductActions.getListProgramFailed(response.data.errorMsg)
@@ -93,10 +93,67 @@ function* onGetListProgram() {
   }
 }
 
+function* onGetListMovie(data) {
+  const { _id, ...payload } = data?.payload;
+  const productId = { productId: _id };
+  const url = `/product/getProductProvider`;
+  try {
+    const response = yield call(postApi, url, productId);
+    if (response && response.data && response.status === 200) {
+      yield put(listProductActions.getListMoiveSuccess(response.data.data));
+    } else {
+      yield put(listProductActions.getListMovieFailed(response.data.errorMsg));
+    }
+  } catch (error) {
+    yield put(listProductActions.getListMovieFailed());
+  }
+}
+
+function* onSaveMovie(data) {
+  const { _id, ...payload } = data?.payload;
+  const productId = { productId: _id };
+  const url = `/favorite/create`;
+  try {
+    const response = yield call(postApi, url, productId);
+    if (response && response.data && response.status === 200) {
+      yield put(listProductActions.onSaveProductSuccess(response.data.data));
+    } else {
+      yield put(listProductActions.onSaveProductFailed(response.data.errorMsg));
+    }
+  } catch (error) {
+    yield put(listProductActions.onSaveProductFailed());
+  }
+}
+
+function* onFeedBackProvider(data) {
+  console.log("data: ", data);
+  const { ...payload } = data?.payload;
+  const url = `/feedback/create`;
+  try {
+    const response = yield call(postApi, url, payload);
+    console.log("response: ", response);
+    if (response && response.data && response.status === 200) {
+      yield put(
+        listProductActions.onFeedBackProviderSuccess(response.data.data)
+      );
+    } else {
+      yield put(
+        listProductActions.onFeedBackProviderFailed(response.data.errorMsg)
+      );
+    }
+  } catch (error) {
+    yield put(listProductActions.onFeedBackProviderFailed());
+  }
+}
+
 export default function* listProductSaga() {
   yield takeLatest(listProductActions.getListProvinder, onGetListProvinder);
   yield takeLatest(listProductActions.getListFavorites, onGetListFavorites);
   yield takeLatest(listProductActions.getListProgram, onGetListProgram);
+  yield takeLatest(listProductActions.getListMoive, onGetListMovie);
+  yield takeLatest(listProductActions.onSaveProduct, onSaveMovie);
+  yield takeLatest(listProductActions.onFeedBackProvider, onFeedBackProvider);
+
   yield takeLatest(
     listProductActions.getListProductByProvider,
     onGetListProductByProvider

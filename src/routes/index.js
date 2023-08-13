@@ -11,6 +11,7 @@ import {
   ListFavoritesListContainer,
   UserContainer,
   MovieDetailsContainer,
+  AccountContainer,
 } from "@/Containers";
 
 export default [
@@ -84,19 +85,19 @@ export default [
     component: ListFavoritesListContainer,
     isShowBottom: true,
   },
-  // {
-  //   name: "NOTIFICATION",
-  //   title: "Thông Báo",
-  //   KEY: "NOTIFICATION",
-  //   path: "/",
-  //   icon: {
-  //     type: "FEATHER",
-  //     name: "bell",
-  //   },
-  //   component: NotificationContainer,
-  //   isShowBottom: true,
-  //   isBadge: true,
-  // },
+  {
+    name: "ACCOUNT",
+    title: "Account",
+    KEY: "ACCOUNT",
+    path: "/",
+    icon: {
+      type: "FEATHER",
+      name: "user",
+    },
+    component: AccountContainer,
+    isShowBottom: true,
+    // isBadge: true,
+  },
   {
     name: "SETTING",
     title: "Cài đặt",
@@ -107,7 +108,7 @@ export default [
       name: "settings",
     },
     component: SettingContainer,
-    isShowBottom: true,
+    // isShowBottom: true,
   },
 
   {

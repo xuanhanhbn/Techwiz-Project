@@ -11,11 +11,7 @@ function* onRegister(data) {
     if (response && response.status === 200) {
       yield put(registerActions.registerAccountSuccess(response.data));
     } else {
-      yield put(
-        registerActions.registerAccountFailed(
-          response.data.duplidateDetails.fieldError
-        )
-      );
+      yield put(registerActions.registerAccountFailed(response.data.message));
     }
   } catch (error) {
     yield put(registerActions.registerAccountFailed("internet"));

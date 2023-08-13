@@ -25,3 +25,5 @@ export { default as UserContainer } from "./User";
 
 // MOVIE DETAILS
 export { default as MovieDetailsContainer } from "./ListProduct/components/MovieDetails";
+
+export { default as AccountContainer } from "./Account";

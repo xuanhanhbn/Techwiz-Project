@@ -39,6 +39,7 @@ import { useFocusEffect } from "@react-navigation/native";
 // import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 // import ActionSheet from 'react-native-actions-sheet';
 import styles from "./style";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 import { useNavigation } from "@react-navigation/native";
 
 const User = ({ route }) => {
@@ -92,10 +93,14 @@ const User = ({ route }) => {
 
   useEffect(() => {
     if (isUpdateUserSuccess) {
+      console.log("2");
       dispatch(userActions.cleanup());
       dispatch(loginActions.getUserInfo());
       handleShowModal("generalAccountModal");
-      handleShowToast("Cập nhật hồ sơ thành công");
+      showMessage({
+        message: "Update info success",
+        type: "success",
+      });
     }
   }, [isUpdateUserSuccess]);
 
@@ -105,7 +110,10 @@ const User = ({ route }) => {
       dispatch(loginActions.getUserInfo());
       // dispatch(userActions.getAccountBalance());
       handleShowModal("generalAccountModal");
-      handleShowToast("Cập nhật mật khẩu thành công");
+      showMessage({
+        message: "Change password success",
+        type: "success",
+      });
     }
   }, [isChangePasswordSuccess]);
 
@@ -174,6 +182,7 @@ const User = ({ route }) => {
       style={Layout.fill}
       behavior={Platform.OS === "ios" ? "padding" : null}
     >
+      <FlashMessage position="top" />
       <View style={styles.wrapper}>
         <View
           style={[styles.topBackground, { backgroundColor: Colors.black }]}

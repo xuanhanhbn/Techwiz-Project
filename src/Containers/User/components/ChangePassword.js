@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -37,9 +38,9 @@ const ChangePasswordModal = (props) => {
     mode: "all",
     criteriaMode: "all", // validate các lỗi cùng lúc
     defaultValues: {
-      currentPassword: "",
+      oldPassword: "",
       newPassword: "",
-      confirmNewPassword: "",
+      confirmPassword: "",
     },
     resolver: yupResolver(changePasswordSchema),
   });
@@ -49,8 +50,7 @@ const ChangePasswordModal = (props) => {
   }, []);
 
   const onSubmit = (data) => {
-    console.log("data: ", data);
-    // dispatch(userActions.changePassword(data));
+    dispatch(userActions.changePassword(data));
   };
 
   const getValidateIcon = (errorText) => {
@@ -129,7 +129,7 @@ const ChangePasswordModal = (props) => {
                     placeholderTextColor={Colors.white}
                   />
                 )}
-                name="currentPassword"
+                name="oldPassword"
                 style={styles.controller}
               />
               <Pressable
@@ -146,9 +146,9 @@ const ChangePasswordModal = (props) => {
                 )}
               </Pressable>
             </View>
-            {errors.currentPassword && (
+            {errors.oldPassword && (
               <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-                {errors.currentPassword.message}
+                {errors.oldPassword.message}
               </Text>
             )}
           </View>
@@ -274,7 +274,7 @@ const ChangePasswordModal = (props) => {
                     placeholderTextColor={Colors.white}
                   />
                 )}
-                name="confirmNewPassword"
+                name="confirmPassword"
                 style={styles.controller}
               />
               <Pressable
@@ -293,9 +293,9 @@ const ChangePasswordModal = (props) => {
                 )}
               </Pressable>
             </View>
-            {errors.confirmNewPassword && (
+            {errors.confirmPassword && (
               <Text style={[ColorText.textDanger, Gutters.tinyTMargin]}>
-                {errors.confirmNewPassword.message}
+                {errors.confirmPassword.message}
               </Text>
             )}
           </View>
@@ -312,10 +312,10 @@ const ChangePasswordModal = (props) => {
             onPress={() => handleShowModal("generalAccountModal")}
           >
             <Text style={[ColorText.textPrimary, ColorText.fontWeight700]}>
-              Huỷ
+              Cancel
             </Text>
           </Pressable>
-          <Pressable
+          <TouchableOpacity
             style={[
               Layout.fill,
               Layout.center,
@@ -332,7 +332,7 @@ const ChangePasswordModal = (props) => {
                 Update
               </Text>
             )}
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

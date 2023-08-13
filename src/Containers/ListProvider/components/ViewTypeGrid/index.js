@@ -23,18 +23,10 @@ import { baseApiUrlGetImage } from "@/utils/constants";
 const width = Dimensions.get("window").width;
 const ViewTypeGrid = forwardRef((props, ref) => {
   const { value, handleRefresh, onLoadMoreData, isLoading } = props;
+  console.log("value: ", value);
   const navigation = useNavigation();
 
-  const {
-    Fonts,
-    Gutters,
-    Layout,
-    ColorText,
-    Border,
-    darkMode,
-    FontSize,
-    Colors,
-  } = useTheme();
+  const { Gutters, Layout, ColorText, Border, FontSize, Colors } = useTheme();
 
   const getPaddingBottom = () => (Platform.OS === "ios" ? 260 : 260);
 
@@ -73,16 +65,6 @@ const ViewTypeGrid = forwardRef((props, ref) => {
                 {/* Hiển thị dạng mobile */}
                 {width <= 768 && (
                   <View key={item.id} style={[Gutters.largeBMargin]}>
-                    {/* <View style={[styles.bookMark]}>
-                      <MenuSelect
-                        value={value}
-                        listDetails={listDetails}
-                        item={item}
-                        type={type}
-                        dataRequest={dataRequest}
-                        typeMenu="grid"
-                      />
-                    </View> */}
                     <View style={[styles.postDateContainer]}>
                       <Text
                         style={[
@@ -90,9 +72,7 @@ const ViewTypeGrid = forwardRef((props, ref) => {
                           Gutters.smallHPadding,
                           { fontSize: FontSize.small },
                         ]}
-                      >
-                        {/* <DisplayRealTime time={apiTime} /> */}
-                      </Text>
+                      ></Text>
                     </View>
                     <TouchableOpacity onPress={() => handleDetail(item)}>
                       <Image
@@ -137,13 +117,27 @@ const ViewTypeGrid = forwardRef((props, ref) => {
 
                       {/* Description */}
                       <Text
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
                         style={[
                           Gutters.smallBMargin,
 
                           { fontSize: FontSize.small, color: Colors.white },
                         ]}
                       >
-                        {item.description}
+                        {item?.description}
+                      </Text>
+
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                        style={[
+                          Gutters.smallBMargin,
+                          ColorText.fontWeight700,
+                          { fontSize: FontSize.small, color: Colors.primary },
+                        ]}
+                      >
+                        {item?.priceRange}
                       </Text>
 
                       <Divider />
@@ -292,7 +286,7 @@ const ViewTypeGrid = forwardRef((props, ref) => {
           }}
         />
       ) : (
-        <Text style={[{ fontSize: FontSize.small, color: Colors.text }]}>
+        <Text style={[{ fontSize: FontSize.small, color: Colors.white }]}>
           No matching search results.
         </Text>
       )}

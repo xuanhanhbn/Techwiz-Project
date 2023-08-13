@@ -22,6 +22,7 @@ import { useToast } from "native-base";
 import { Switch } from "@rneui/themed";
 import Clipboard from "@react-native-clipboard/clipboard";
 import EncryptedStorage from "react-native-encrypted-storage";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 import styles from "./style";
 import DisableAccount from "./components/DisableAccount";
@@ -135,8 +136,10 @@ const Setting = () => {
     dispatch(userActions.cleanup());
     dispatch(loginActions.cleanup());
     await EncryptedStorage.removeItem("loginData");
-    handleShowToast("Đăng xuất thành công");
-    // console.log('aaaa');
+    showMessage({
+      message: "Logout Success",
+      type: "success",
+    });
     setTimeout(() => {
       // console.log('aaaa');
       navigation.navigate("LOGIN");
@@ -167,8 +170,9 @@ const Setting = () => {
 
   //  Đăng xuất
   const handleLogout = () => {
-    dispatch(userActions.logout());
-    analytics().logEvent("LOGOUT", {});
+    handleAfterLogoutSuccess();
+    // dispatch(userActions.logout());
+    // analytics().logEvent("LOGOUT", {});
     // handleCloseLogoutModal()
     setVisible(false);
   };
@@ -357,9 +361,10 @@ const Setting = () => {
 
   return (
     <View style={styles.wrapper}>
+      <FlashMessage position="top" />
       <View style={[styles.topBackground, { backgroundColor: Colors.black }]} />
       <Pressable
-        // onPress={() => navigation.goBack()}
+        onPress={() => navigation.goBack()}
         style={[
           Gutters.largeTMargin,
           Gutters.middleLMargin,
@@ -368,11 +373,11 @@ const Setting = () => {
         ]}
         hitSlop={{ bottom: 20, left: 20, right: 20, top: 20 }} // expand pham vi cua button
       >
-        {/* <IconFeather
+        <IconFeather
           name="chevron-left"
           size={20}
-          style={{ color: Colors.text }}
-        /> */}
+          style={{ color: Colors.white }}
+        />
         <Text
           style={[
             Fonts.titleSmall,

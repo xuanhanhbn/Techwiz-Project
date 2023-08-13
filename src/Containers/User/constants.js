@@ -16,11 +16,11 @@ export const listSupport = [
 export const inputDisableAccount = [
   {
     field: "name",
-    label: "Tên đăng nhập",
+    label: "Email",
   },
   {
     field: "password",
-    label: "Mật khẩu",
+    label: "Password",
   },
 ];
 // chứa ít nhất 1 kí tự viết hoa
@@ -57,10 +57,22 @@ export const updateUserSchema = yup.object({
     .max(40, "Full name not exceeding 40 characters.")
     .required("Please enter your full name"),
   birthday: yup.string().required("Please choose birth day"),
-  phoneNumber: yup
+  tel: yup
     .string()
     .matches(/^(84|0[3|5|7|8|9])+([0-9]{8})\b$/, "Invalid phone number")
     .required("Please enter your phone number"),
+  address: yup
+    .string()
+    .max(40, "Adress not exceeding 40 characters.")
+    .required("Please enter your Adress"),
+  city: yup
+    .string()
+    .max(40, "City not exceeding 40 characters.")
+    .required("Please enter your City"),
+  country: yup
+    .string()
+    .max(40, "Country not exceeding 40 characters.")
+    .required("Please enter your Country"),
   email: yup
     .string()
     .matches(
@@ -71,10 +83,7 @@ export const updateUserSchema = yup.object({
 });
 
 export const changePasswordSchema = yup.object({
-  currentPassword: yup
-    .string()
-
-    .required("Please enter your password"),
+  oldPassword: yup.string().required("Please enter your password"),
   newPassword: yup
     .string()
     .containUpperCase("The password must start with an uppercase letter")
@@ -84,7 +93,7 @@ export const changePasswordSchema = yup.object({
     .min(8, "The password must be at least 8 characters ")
     .max(32, "The password can be up to 32 characters")
     .required("Please enter your new password"),
-  confirmNewPassword: yup
+  confirmPassword: yup
     .string()
     .required("Please enter your password")
     .oneOf(
