@@ -87,7 +87,6 @@ const loginSlice = createSlice({
       state.isLoading = false;
       state.errorMessage = "";
       state.loginData = {};
-      state.userInfo = {};
       state.isLoginSuccess = false;
       state.forgotPassword = {};
       state.checkCode = {};

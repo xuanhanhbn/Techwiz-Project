@@ -58,14 +58,14 @@ function* onGetUserInfo() {
 }
 
 function* onForgotPassword(data) {
-  console.log("datA: ", data);
+  // console.log("datA: ", data);
   const url = "forgot-password";
   try {
     const response = yield call(postApi, url, data.payload);
-    console.log("====================================");
-    console.log("responseForgotPassword", response);
-    console.log("====================================");
-    if (response.data.status === 1) {
+    // console.log("====================================");
+    // console.log("responseForgotPassword", response);
+    // console.log("====================================");
+    if (response && response.status === 200) {
       yield put(loginActions.forgotPasswordSuccess(response.data));
     } else {
       yield put(loginActions.forgotPasswordFailed(response?.data?.errorMsg));
@@ -98,14 +98,14 @@ function* onCheckCode(data) {
 }
 
 function* onResetPassword(data) {
-  const { code, ...dataRequest } = data.payload;
-  const url = `api/v1/users/reset-password/${code.token}`;
-  // console.log(data);
+  const payload = data?.payload;
+  const url = "reset-password";
+  console.log(data);
   try {
-    const response = yield call(postApi, url, dataRequest);
-    // console.log('====================================');
-    // console.log('responseResetPassword', response);
-    // console.log('====================================');
+    const response = yield call(postApi, url, payload);
+    console.log("====================================");
+    console.log("responseResetPassword", response);
+    console.log("====================================");
     if (response?.status === 200) {
       yield put(loginActions.resetPasswordSuccess(response.data));
     } else {

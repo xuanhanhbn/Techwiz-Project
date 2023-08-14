@@ -69,7 +69,7 @@ function MovieDetails(route) {
         <View>
           <VideoPlayer
             video={{
-              uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+              uri: `${baseApiUrlGetImage}${dataMovie?.thumbnail}`,
             }}
             autoplay
             // showDuration

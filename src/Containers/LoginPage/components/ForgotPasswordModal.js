@@ -23,6 +23,8 @@ import IconFeather from "react-native-vector-icons/Feather";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { loginActions, makeSelectLogin } from "../loginSlice";
+import FlashMessage, { showMessage } from "react-native-flash-message";
+
 import styles from "../style";
 import {
   confirmEmailSchema,
@@ -41,6 +43,7 @@ const ForgotPasswordModal = (props) => {
   const loginData = useSelector(makeSelectLogin);
   const { isLoading, errorMessage, forgotPassword, checkCode, resetPassword } =
     loginData;
+  console.log("loginData: ", loginData);
 
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
@@ -52,6 +55,7 @@ const ForgotPasswordModal = (props) => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -64,6 +68,7 @@ const ForgotPasswordModal = (props) => {
     control: controlCode,
     handleSubmit: handleSubmitConfirmCode,
     formState: { errors: errorConfirmCode },
+    setError: setErrorStepTwo,
     reset: resetConfirmCode,
   } = useForm({
     defaultValues: {
@@ -82,10 +87,21 @@ const ForgotPasswordModal = (props) => {
     criteriaMode: "all", // validate các lỗi cùng lúc
     defaultValues: {
       newPassword: "",
-      confirmNewPassword: "",
+      confirmPassword: "",
     },
     resolver: yupResolver(resetPasswordSchema),
   });
+
+  useEffect(() => {
+    if (step === 1 && errorMessage?.length > 0) {
+      setError("email", { type: "email", message: "Email address not found." });
+
+      return showMessage({
+        message: "Email address not found.",
+        type: "danger",
+      });
+    }
+  }, [errorMessage]);
 
   useEffect(() => {
     dispatch(loginActions.cleanup());
@@ -93,10 +109,10 @@ const ForgotPasswordModal = (props) => {
   }, []);
 
   useEffect(() => {
-    if (forgotPassword.status === 1) {
+    if (forgotPassword.data && forgotPassword.status === "success") {
       setStep(2);
-      resetCountdown(60);
-      startCountdown();
+      // resetCountdown(60);
+      // startCountdown();
       resetConfirmCode();
     }
   }, [forgotPassword]);
@@ -108,25 +124,32 @@ const ForgotPasswordModal = (props) => {
   }, [checkCode]);
 
   useEffect(() => {
-    if (resetPassword.status === 1) {
+    if (resetPassword.status === "success") {
       setStep(4);
     }
   }, [resetPassword]);
 
-  useEffect(() => {
-    if (countdown === 0) {
-      stopCountdown();
-    }
-  }, [countdown]);
+  // useEffect(() => {
+  //   if (countdown === 0) {
+  //     stopCountdown();
+  //   }
+  // }, [countdown]);
 
   const onSubmit = (data) => {
-    console.log("data: ", data);
     if (step === 1) {
       setEmail(data.email);
       dispatch(loginActions.forgotPassword(data));
     } else if (step === 2) {
-      dispatch(loginActions.checkCode({ email: email, ...data }));
-      setCode(data);
+      if (Number(data?.token) !== loginData?.forgotPassword?.data?.resetToken) {
+        setErrorStepTwo("token", {
+          type: "value",
+          message: "Active code is valid.",
+        });
+        return;
+      }
+      setStep(3);
+      // dispatch(loginActions.checkCode({ email: email, ...data }));
+      setCode(data?.token);
     } else if (step === 3) {
       dispatch(loginActions.resetPassword({ code: code, ...data }));
     }
@@ -143,6 +166,7 @@ const ForgotPasswordModal = (props) => {
   const getValidateIcon = (errorText) => {
     const isErrorMatches =
       errorResetPassword.newPassword?.types.matches?.includes(errorText);
+
     if (isErrorMatches) {
       return (
         <Icon
@@ -164,6 +188,8 @@ const ForgotPasswordModal = (props) => {
   const firstStep = () => {
     return (
       <View style={width > 800 ? styles.modalTablet : styles.modal}>
+        <FlashMessage position="top" />
+
         <View>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -220,13 +246,18 @@ const ForgotPasswordModal = (props) => {
         </Text> */}
         <View style={[Gutters.regularTMargin, styles.borderBottom]}>
           <Text style={[ColorText.fontWeight700, { color: Colors.white }]}>
-            Mã xác nhận đã được gửi qua email
+            Confirmation code has been sent via email:
           </Text>
           <Text style={[ColorText.fontWeight700, { color: Colors.white }]}>
-            <Text style={[ColorText.fontWeight700, { color: Colors.white }]}>
+            <Text
+              style={[
+                ColorText.fontWeight700,
+                { color: Colors.primary, fontSize: 16 },
+              ]}
+            >
               {email}
             </Text>
-            . Vui lòng kiểm tra lại hòm thư và nhập mã xác nhận
+            . Please check your email inbox and enter the confirmation code.
           </Text>
         </View>
         <KeyboardAvoidingView
@@ -268,7 +299,7 @@ const ForgotPasswordModal = (props) => {
           </TouchableOpacity>
         </KeyboardAvoidingView>
 
-        {countdown > 0 ? (
+        {/* {countdown > 0 ? (
           <View style={[Layout.rowHCenter, Gutters.largeTMargin]}>
             <Text style={{ color: Colors.black }}>Gửi lại mã sau</Text>
             <Text style={[ColorText.textPrimary, Gutters.tinyLMargin]}>
@@ -294,7 +325,7 @@ const ForgotPasswordModal = (props) => {
               />
             </Pressable>
           </View>
-        )}
+        )} */}
       </View>
     );
   };
@@ -420,7 +451,7 @@ const ForgotPasswordModal = (props) => {
                   placeholderTextColor={Colors.white}
                 />
               )}
-              name="confirmNewPassword"
+              name="confirmPassword"
               style={styles.controller}
             />
             <Pressable
@@ -437,7 +468,7 @@ const ForgotPasswordModal = (props) => {
               )}
             </Pressable>
           </View>
-          {errorResetPassword.confirmNewPassword && (
+          {errorResetPassword.confirmPassword && (
             <Text
               style={[
                 ColorText.fontWeight700,
@@ -445,7 +476,7 @@ const ForgotPasswordModal = (props) => {
                 { color: "#eee" },
               ]}
             >
-              {errorResetPassword.confirmNewPassword.message}
+              {errorResetPassword.confirmPassword.message}
             </Text>
           )}
           <TouchableOpacity

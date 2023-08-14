@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@/Hooks";
@@ -30,6 +31,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import styles from "./style";
 import { useNavigation } from "@react-navigation/native";
 import { userActions, makeSelectUser } from "../User/userSlice";
+import { accountActions, makeSelectAccount } from "./accountSlice";
+import { baseApiUrlGetImage } from "@/utils/constants";
 
 const Account = ({ route }) => {
   // const { t } = useTranslation();
@@ -40,12 +43,17 @@ const Account = ({ route }) => {
 
   const userData = useSelector(makeSelectUser);
   const loginPageData = useSelector(makeSelectLogin);
+  const getGlobalData = useSelector(makeSelectAccount);
+
+  const globalData = getGlobalData?.dataListProviderByUser || [];
   const userInfo = loginPageData?.userInfo;
 
   const isLoading = loginPageData?.isLoading;
   const isUpdateUserSuccess = userData?.isUpdateUserSuccess;
   const isChangePasswordSuccess = userData?.isChangePasswordSuccess;
   const errorMessage = userData?.errorMessage;
+
+  const widthDimensions = Dimensions.get("window").width;
 
   const handleShowToast = (text) => {
     toast.closeAll();
@@ -58,7 +66,7 @@ const Account = ({ route }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      dispatch(loginActions.getUserInfo());
+      dispatch(accountActions.getListProviderByUser());
     }, [])
   );
 
@@ -111,19 +119,18 @@ const Account = ({ route }) => {
 
                   <View>
                     <View
-                      style={[
-                        Layout.row,
-                        { justifyContent: "space-between", width: "75%" },
-                      ]}
+                      style={[Layout.row, { justifyContent: "space-between" }]}
                     >
-                      <View>
-                        <Text
-                          style={[ColorText.white, ColorText.fontWeight700]}
-                        >
-                          {userInfo?.email}
-                        </Text>
-                      </View>
-                      <View>
+                      <Text
+                        style={[
+                          ColorText.white,
+                          ColorText.fontWeight700,
+                          Gutters.largeRMargin,
+                        ]}
+                      >
+                        {userInfo?.email}
+                      </Text>
+                      <View style={{ width: "100%" }}>
                         <TouchableOpacity
                           onPress={() => navigation.navigate("SETTING")}
                         >
@@ -166,27 +173,50 @@ const Account = ({ route }) => {
               </View>
             </View>
             <ScrollView style={styles.scrollView}>
-              <View
-                style={[
-                  Layout.rowHCenter,
-                  Gutters.regularHPadding,
-                  {
-                    backgroundColor: Colors.secondaryBackground,
-                    borderRadius: 8,
-                    marginTop: 10,
-                    justifyContent: "space-between",
-                  },
-                ]}
-              >
-                <View>
-                  <Text style={{ color: Colors.white }}>IMG</Text>
-                </View>
-                <View>
-                  <Text style={{ color: Colors.white }}>Title</Text>
-                  <Text style={{ color: Colors.white }}>Description</Text>
-                  <Text style={{ color: Colors.white }}>Author</Text>
-                </View>
-              </View>
+              {Array.isArray(globalData?.data) &&
+                globalData?.data?.length > 0 &&
+                globalData?.data.map((item) => {
+                  return (
+                    <View
+                      key={item?._id}
+                      style={[
+                        Layout.rowHCenter,
+                        Gutters.regularHPadding,
+                        {
+                          backgroundColor: Colors.secondaryBackground,
+                          borderRadius: 8,
+                          marginTop: 10,
+                          justifyContent: "space-between",
+                        },
+                      ]}
+                    >
+                      <View>
+                        <Image
+                          source={{
+                            uri: `${baseApiUrlGetImage}${item?.thumbnail}`,
+                          }}
+                          style={{
+                            width: widthDimensions / 3,
+                            height: 100,
+                            borderRadius: 8,
+                          }}
+                          alt="avatar"
+                        />
+                      </View>
+                      <View>
+                        <Text style={{ color: Colors.white }}>
+                          {item?.name}
+                        </Text>
+                        <Text style={{ color: Colors.white }}>
+                          {item?.description}
+                        </Text>
+                        <Text style={{ color: Colors.white }}>
+                          {item?.autor}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
             </ScrollView>
           </View>
         )}

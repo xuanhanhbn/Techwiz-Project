@@ -23,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import ReactNativeBiometrics, { BiometryTypes } from "react-native-biometrics";
 import EncryptedStorage from "react-native-encrypted-storage";
 import analytics from "@react-native-firebase/analytics";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 const LoginModal = (props) => {
   // const { t } = useTranslation();

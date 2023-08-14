@@ -24,7 +24,8 @@ function FavoritesList() {
   const dispatch = useDispatch();
 
   const getDataFavoritesList = useSelector(makeSelectFavorites);
-  console.log("getDataFavoritesList: ", getDataFavoritesList);
+  const currentData = getDataFavoritesList?.dataFavorites?.productId;
+
   const isLoading = getDataFavoritesList?.isLoading;
   const flatListRef = useRef(null);
 
@@ -35,7 +36,7 @@ function FavoritesList() {
   };
 
   const [dataRequest, setDataRequest] = useState(baseDataRequest);
-  const [currentData, setCurrentData] = useState([]);
+  // const [currentData, setCurrentData] = useState([]);
 
   // useEffect(() => {
   //   if (dataProvinder) {
@@ -57,7 +58,7 @@ function FavoritesList() {
       const res = await getApiProvider(url, data);
       if (res && res.status === 200) {
         setDataRequest(data);
-        setCurrentData(res.data.data);
+        // setCurrentData(res.data.data);
       }
     } catch (error) {
       return handleShowToast("Error");

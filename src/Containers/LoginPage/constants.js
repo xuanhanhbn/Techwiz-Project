@@ -60,7 +60,7 @@ export const resetPasswordSchema = yup.object({
     .min(8, "The password must be at least 8 characters ")
     .max(32, "The password can be up to 32 characters")
     .required("Please enter your new password"),
-  confirmNewPassword: yup
+  confirmPassword: yup
     .string()
     .required("Please enter your password")
     .oneOf(

@@ -6,27 +6,43 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import React, { memo, forwardRef } from "react";
+import IconIonic from "react-native-vector-icons/Ionicons";
+
+import React, { memo, forwardRef, useState } from "react";
 import { Card } from "@rneui/themed";
 import { useTheme } from "@/Hooks";
 import { useNavigation } from "@react-navigation/native";
 import imageBlank from "@/Components/img/blankImage.png";
+import { baseApiUrlGetImage } from "@/utils/constants";
+import VideoPlayer from "react-native-video-player";
 
 const width = Dimensions.get("window").width;
 const DisplayTypeMenu = forwardRef((props, ref) => {
   const { value, handleRefresh, onLoadMoreData, type } = props;
+  const [isShowMore, setIsShowMore] = useState(false);
   const navigation = useNavigation();
-  const { Fonts, Gutters, Layout, ColorText, darkMode, FontSize, Colors } =
-    useTheme();
+  const {
+    Fonts,
+    Gutters,
+    Layout,
+    ColorText,
+    darkMode,
+    FontSize,
+    Colors,
+    FontSizeResponsive,
+  } = useTheme();
 
   const handleDetail = (item) => {
     navigation.navigate("POSTDETAIL", { item });
   };
 
-  const getPaddingBottom = () => (Platform.OS === "ios" ? 260 : 260);
+  const handleCustomStyle = (data) => {
+    console.log("dat:A", data);
+  };
 
+  const getPaddingBottom = () => (Platform.OS === "ios" ? 260 : 260);
   return (
-    <View style={{ flex: type === "album" ? 1 : 0 }}>
+    <View>
       {Array.isArray(value) && value.length > 0 ? (
         <FlatList
           data={value}
@@ -38,82 +54,64 @@ const DisplayTypeMenu = forwardRef((props, ref) => {
           onEndReachedThreshold={0.5}
           contentContainerStyle={{ paddingBottom: getPaddingBottom() }}
           renderItem={({ item }) => (
-            <View key={item.id} style={[Gutters.smallVMargin]}>
-              <View style={[Layout.rowHCenter, Layout.fullWeight]}>
-                <View style={[Layout.smallWidth]}>
-                  <TouchableOpacity onPress={() => handleDetail(item)}>
-                    <Card.Image
-                      style={[{ height: width * 0.3, borderRadius: 5 }]}
-                      source={
-                        imageBlank
-                        // item.urlImages.length > 0
-                        //   ? {
-                        //       uri: item.urlImages[0],
-                        //     }
-                        //   : imageBlank
-                      }
-                      alt="image"
-                    />
-                  </TouchableOpacity>
+            <View
+              key={item.id}
+              style={[Gutters.smallVMargin, Gutters.regularHPadding]}
+            >
+              <View>
+                <VideoPlayer
+                  video={{
+                    uri: `${baseApiUrlGetImage}${item?.thumbnail}`,
+                  }}
+                  // showDuration
+                  videoWidth={1600}
+                  videoHeight={900}
+                  thumbnail={{
+                    uri: "@/Components/img/blankImage.png",
+                  }}
+                />
+                <View style={[Gutters.regularTMargin]}>
+                  <Text
+                    style={[
+                      FontSizeResponsive.textSmall,
+                      ColorText.fontWeight700,
+                      { color: Colors.white },
+                    ]}
+                  >
+                    {item?.name}
+                  </Text>
                 </View>
 
-                <View style={[Layout.mediumWidth, Gutters.smallLMargin]}>
-                  <View style={[Layout.fullWeight]}>
-                    <TouchableOpacity onPress={() => handleDetail(item)}>
-                      <Text
-                        style={[
-                          Layout.fullWeight,
-                          ColorText.fontWeight800,
-                          Gutters.smallRPadding,
-                          {
-                            fontSize: FontSize.small,
-                            color: Colors.text,
-                          },
-                        ]}
-                        numberOfLines={2}
-                        ellipsizeMode="tail"
-                      >
-                        {item.title}
-                      </Text>
-
-                      <Text
-                        style={[
-                          Gutters.smallBMargin,
-                          Gutters.smallRPadding,
-                          ColorText.colorLabels,
-                          { fontSize: FontSize.small },
-                        ]}
-                        numberOfLines={2}
-                        ellipsizeMode="tail"
-                      >
-                        {item.location}
-                      </Text>
-
-                      <View style={[Layout.rowHCenter]}>
-                        <Text
-                          style={[
-                            Gutters.regularRMargin,
-                            Fonts.textBold,
-                            {
-                              fontSize: FontSize.small,
-                              color: darkMode ? Colors.white : Colors.text,
-                            },
-                          ]}
-                        >
-                          {item.price}
-                        </Text>
-                        <Text
-                          style={{
-                            color: darkMode ? Colors.white : Colors.text,
-                            fontSize: FontSize.small,
-                          }}
-                        >
-                          {item.area || ""}
-                          {item.area > 0 ? item.areaUnit : ""}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                <View style={[Gutters.regularTMargin]}>
+                  <Text
+                    numberOfLines={isShowMore ? null : 3}
+                    ellipsizeMode="tail"
+                    style={[
+                      FontSizeResponsive.textNormal,
+                      ColorText.fontWeight500,
+                      { color: Colors.white },
+                    ]}
+                  >
+                    {item?.description}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setIsShowMore(!isShowMore)}
+                    style={[Layout.rowHCenter]}
+                  >
+                    <Text
+                      style={[
+                        FontSizeResponsive.textSmall,
+                        { color: Colors.primary },
+                      ]}
+                    >
+                      {isShowMore ? "Collapse" : "Show more"}
+                    </Text>
+                    <IconIonic
+                      name={isShowMore ? "chevron-up" : "chevron-down"}
+                      color={Colors.primary}
+                      size={20}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>

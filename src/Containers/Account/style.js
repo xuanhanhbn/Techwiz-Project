@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   topElements: {
     flexDirection: "row",
-    // justifyContent: 'space-between',
+    // justifyContent: "space-between",
     alignItems: "center",
   },
   scrollView: {

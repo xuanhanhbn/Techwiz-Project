@@ -8,6 +8,7 @@ import {
   Dimensions,
   Linking,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import IconIonic from "react-native-vector-icons/Ionicons";
@@ -26,6 +27,7 @@ import { Divider } from "native-base";
 const DetailsProduct = (route) => {
   const itemProvinder = route?.route?.params?.itemProvinder;
   const getDataDetailProvinder = useSelector(makeSelectListProduct);
+  const isLoading = getDataDetailProvinder?.isLoading;
   const dataListProductByProvinder =
     getDataDetailProvinder?.dataListProductByProvinder || [];
   const {
@@ -146,376 +148,385 @@ const DetailsProduct = (route) => {
 
   return (
     <ScrollView style={Layout.fill}>
-      <View style={[Layout.fill, { backgroundColor: "#000" }]}>
-        <View>
-          {/* <IconIonic
-            name="chevron-back-outline"
-            size={20}
-            color={Colors.white}
-            style={[Gutters.regularTPadding]}
-          /> */}
-          <Image
-            style={{ height: 300, width: widthDimensions }}
-            source={{ uri: `${baseApiUrlGetImage}${itemProvinder?.thumbnail}` }}
-          />
-        </View>
-        {/* Banner */}
-        <View style={[Layout.colCenter]} />
-        <View style={[Gutters.smallHPadding]}>
-          {/* Title */}
-          <View style={[Gutters.smallTMargin]}>
-            <Text
-              style={[
-                ColorText.white,
-                ColorText.fontWeight700,
-                FontSizeResponsive.textSmall,
-              ]}
-            >
-              {itemProvinder?.name}
-            </Text>
-          </View>
-
-          {/* Description */}
-          <View style={[Gutters.smallTMargin]}>
-            <Text
-              style={[
-                ColorText.white,
-                ColorText.fontWeight500,
-                FontSizeResponsive.textSmall,
-              ]}
-            >
-              {itemProvinder?.description}
-            </Text>
-          </View>
-
-          {/* Feedback */}
-          <View style={[Gutters.smallTMargin]}>
-            <Tooltip
-              visible={isOpenToolTip}
-              onOpen={() => {
-                setIsOpenToolTip(true);
+      {isLoading ? (
+        <ActivityIndicator color={Colors.primary} size="large" />
+      ) : (
+        <View style={[Layout.fill, { backgroundColor: "#000" }]}>
+          <View>
+            {/* <IconIonic
+    name="chevron-back-outline"
+    size={20}
+    color={Colors.white}
+    style={[Gutters.regularTPadding]}
+  /> */}
+            <Image
+              style={{ height: 300, width: widthDimensions }}
+              source={{
+                uri: `${baseApiUrlGetImage}${itemProvinder?.thumbnail}`,
               }}
-              onClose={() => {
-                setIsOpenToolTip(false);
-              }}
-              popover={renderPopover()}
-              height={60}
-              width={250}
-              withPointer={false}
-            >
-              <IconFeather name="thumbs-up" color={Colors.white} size={20} />
+            />
+          </View>
+          {/* Banner */}
+          <View style={[Layout.colCenter]} />
+          <View style={[Gutters.smallHPadding]}>
+            {/* Title */}
+            <View style={[Gutters.smallTMargin]}>
               <Text
                 style={[
-                  ColorText.fontWeight500,
+                  ColorText.white,
+                  ColorText.fontWeight700,
                   FontSizeResponsive.textSmall,
-                  { color: Colors.white },
                 ]}
               >
-                Feed back
+                {itemProvinder?.name}
               </Text>
-            </Tooltip>
-          </View>
+            </View>
 
-          <View style={[Gutters.smallTMargin]}>
-            <Text
-              style={[
-                ColorText.white,
-                ColorText.fontWeight700,
-                FontSizeResponsive.textSmall,
-                { fontSize: FontSize.normal },
-              ]}
-            >
-              Package
-            </Text>
+            {/* Description */}
             <View style={[Gutters.smallTMargin]}>
-              <ScrollView
-                horizontal
-                ref={refReleased}
-                showsHorizontalScrollIndicator={false}
+              <Text
+                style={[
+                  ColorText.white,
+                  ColorText.fontWeight500,
+                  FontSizeResponsive.textSmall,
+                ]}
               >
-                {itemProvinder?.packages?.length > 0 &&
-                  itemProvinder?.packages.map((itemPackge) => (
-                    <View>
-                      <View
-                        style={{
-                          height: 300,
-                          width: widthDimensions / 2,
-                          borderRadius: 8,
-                          backgroundColor: Colors.secondaryBackground,
-                          marginRight: 3,
-                        }}
-                      >
-                        <Text
-                          style={[
-                            Gutters.smallTMargin,
-                            FontSizeResponsive.textSmall,
-                            ColorText.fontWeight700,
-                            { color: Colors.white, textAlign: "center" },
-                          ]}
-                        >
-                          {itemPackge?.name}
-                        </Text>
-                        <Divider my={2} />
+                {itemProvinder?.description}
+              </Text>
+            </View>
 
+            {/* Feedback */}
+            <View style={[Gutters.smallTMargin]}>
+              <Tooltip
+                visible={isOpenToolTip}
+                onOpen={() => {
+                  setIsOpenToolTip(true);
+                }}
+                onClose={() => {
+                  setIsOpenToolTip(false);
+                }}
+                popover={renderPopover()}
+                height={60}
+                width={250}
+                withPointer={false}
+              >
+                <IconFeather name="thumbs-up" color={Colors.white} size={20} />
+                <Text
+                  style={[
+                    ColorText.fontWeight500,
+                    FontSizeResponsive.textSmall,
+                    { color: Colors.white },
+                  ]}
+                >
+                  Feed back
+                </Text>
+              </Tooltip>
+            </View>
+
+            <View style={[Gutters.smallTMargin]}>
+              <Text
+                style={[
+                  ColorText.white,
+                  ColorText.fontWeight700,
+                  FontSizeResponsive.textSmall,
+                  { fontSize: FontSize.normal },
+                ]}
+              >
+                Package
+              </Text>
+              <View style={[Gutters.smallTMargin]}>
+                <ScrollView
+                  horizontal
+                  ref={refReleased}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {itemProvinder?.packages?.length > 0 &&
+                    itemProvinder?.packages.map((itemPackge) => (
+                      <View>
                         <View
-                          style={[
-                            Layout.rowHCenter,
-                            Gutters.regularHPadding,
-
-                            { justifyContent: "space-between" },
-                          ]}
+                          style={{
+                            height: 300,
+                            width: widthDimensions / 2,
+                            borderRadius: 8,
+                            backgroundColor: Colors.secondaryBackground,
+                            marginRight: 3,
+                          }}
                         >
                           <Text
                             style={[
-                              FontSizeResponsive.textSmall,
-                              ColorText.fontWeight500,
-                              { color: Colors.white },
-                            ]}
-                          >
-                            {itemPackge?.equipment}
-                          </Text>
-                          <IconIonic
-                            name="checkmark-circle"
-                            color={Colors.primary}
-                            size={18}
-                          />
-                        </View>
-                        <Divider my={2} />
-
-                        <View
-                          style={[
-                            Layout.rowHCenter,
-                            Gutters.regularHPadding,
-
-                            ColorText.fontWeight500,
-                            { justifyContent: "space-between" },
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              FontSizeResponsive.textSmall,
-                              { color: Colors.white },
-                            ]}
-                          >
-                            {itemPackge?.resolution}
-                          </Text>
-                          <IconIonic
-                            name="checkmark-circle"
-                            color={Colors.primary}
-                            size={18}
-                          />
-                        </View>
-                        <Divider my={2} />
-
-                        <View
-                          style={[
-                            Layout.rowHCenter,
-                            Gutters.regularHPadding,
-
-                            ColorText.fontWeight500,
-                            { justifyContent: "space-between" },
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              FontSizeResponsive.textSmall,
-                              { color: Colors.white },
-                            ]}
-                          >
-                            Number Of Equipment
-                          </Text>
-                          <Text
-                            style={[
-                              FontSizeResponsive.textSmall,
-                              ColorText.fontWeight500,
-                              { color: Colors.primary },
-                            ]}
-                          >
-                            {itemPackge?.numberOfEquipment}
-                          </Text>
-                        </View>
-                        <Divider my={2} />
-
-                        <View
-                          style={[
-                            Layout.rowHCenter,
-                            Gutters.regularHPadding,
-
-                            { justifyContent: "space-between" },
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              FontSizeResponsive.textSmall,
-                              ColorText.fontWeight500,
-                              { color: Colors.white },
-                            ]}
-                          >
-                            Price
-                          </Text>
-                          <Text
-                            style={[
+                              Gutters.smallTMargin,
                               FontSizeResponsive.textSmall,
                               ColorText.fontWeight700,
-                              { color: "yellow" },
+                              { color: Colors.white, textAlign: "center" },
                             ]}
                           >
-                            {itemPackge?.price} $
+                            {itemPackge?.name}
                           </Text>
-                        </View>
-                        <Divider my={2} />
+                          <Divider my={2} />
 
-                        <View
-                          style={[
-                            Gutters.smallTMargin,
-                            { justifyContent: "center", alignItems: "center" },
-                          ]}
-                        >
-                          <TouchableOpacity
-                            style={{
-                              backgroundColor: Colors.primary,
-                              marginTop: 5,
-                              borderRadius: 8,
-                              width: "60%",
-                            }}
-                            onPress={() => handleBuyPackage(itemPackge)}
+                          <View
+                            style={[
+                              Layout.rowHCenter,
+                              Gutters.regularHPadding,
+
+                              { justifyContent: "space-between" },
+                            ]}
                           >
                             <Text
                               style={[
-                                Gutters.tinyVPadding,
                                 FontSizeResponsive.textSmall,
                                 ColorText.fontWeight500,
-                                { textAlign: "center", color: Colors.white },
+                                { color: Colors.white },
                               ]}
                             >
-                              BUY
+                              {itemPackge?.equipment}
                             </Text>
-                          </TouchableOpacity>
+                            <IconIonic
+                              name="checkmark-circle"
+                              color={Colors.primary}
+                              size={18}
+                            />
+                          </View>
+                          <Divider my={2} />
+
+                          <View
+                            style={[
+                              Layout.rowHCenter,
+                              Gutters.regularHPadding,
+
+                              ColorText.fontWeight500,
+                              { justifyContent: "space-between" },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                { color: Colors.white },
+                              ]}
+                            >
+                              {itemPackge?.resolution}
+                            </Text>
+                            <IconIonic
+                              name="checkmark-circle"
+                              color={Colors.primary}
+                              size={18}
+                            />
+                          </View>
+                          <Divider my={2} />
+
+                          <View
+                            style={[
+                              Layout.rowHCenter,
+                              Gutters.regularHPadding,
+
+                              ColorText.fontWeight500,
+                              { justifyContent: "space-between" },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                { color: Colors.white },
+                              ]}
+                            >
+                              Number Of Equipment
+                            </Text>
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                ColorText.fontWeight500,
+                                { color: Colors.primary },
+                              ]}
+                            >
+                              {itemPackge?.numberOfEquipment}
+                            </Text>
+                          </View>
+                          <Divider my={2} />
+
+                          <View
+                            style={[
+                              Layout.rowHCenter,
+                              Gutters.regularHPadding,
+
+                              { justifyContent: "space-between" },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                ColorText.fontWeight500,
+                                { color: Colors.white },
+                              ]}
+                            >
+                              Price
+                            </Text>
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                ColorText.fontWeight700,
+                                { color: "yellow" },
+                              ]}
+                            >
+                              {itemPackge?.price} $
+                            </Text>
+                          </View>
+                          <Divider my={2} />
+
+                          <View
+                            style={[
+                              Gutters.smallTMargin,
+                              {
+                                justifyContent: "center",
+                                alignItems: "center",
+                              },
+                            ]}
+                          >
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: Colors.primary,
+                                marginTop: 5,
+                                borderRadius: 8,
+                                width: "60%",
+                              }}
+                              onPress={() => handleBuyPackage(itemPackge)}
+                            >
+                              <Text
+                                style={[
+                                  Gutters.tinyVPadding,
+                                  FontSizeResponsive.textSmall,
+                                  ColorText.fontWeight500,
+                                  { textAlign: "center", color: Colors.white },
+                                ]}
+                              >
+                                BUY
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       </View>
-                    </View>
-                  ))}
+                    ))}
+                </ScrollView>
+              </View>
+            </View>
+
+            <View style={[Gutters.smallTMargin]}>
+              <Text
+                style={[
+                  ColorText.white,
+                  ColorText.fontWeight500,
+                  Gutters.smallBMargin,
+                  FontSizeResponsive.textSmall,
+                ]}
+              >
+                List Movie
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicato={false}>
+                {Array.isArray(dataListProductByProvinder) &&
+                  dataListProductByProvinder.map((productByProvider) => {
+                    return (
+                      <View
+                        style={styles.container}
+                        key={`listProvinder_${productByProvider?._id}`}
+                      >
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate("MOVIE_DETAILS", {
+                              productByProvider,
+                            })
+                          }
+                        >
+                          <Image
+                            style={[
+                              {
+                                height: 150,
+                                width: widthDimensions / 1.5,
+                                borderRadius: 8,
+                              },
+                            ]}
+                            source={{
+                              uri: `${baseApiUrlGetImage}${productByProvider.thumbnail}`,
+                            }}
+                          />
+                          <View style={styles.iconContainer}>
+                            <IconIonic
+                              name="play-circle-outline"
+                              size={35}
+                              color={Colors.white}
+                            />
+                          </View>
+                        </TouchableOpacity>
+                        <View style={[Gutters.smallTMargin]}>
+                          <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                              ColorText.fontWeight700,
+                              FontSizeResponsive.textSmall,
+                              {
+                                color: Colors.white,
+                                maxWidth: widthDimensions / 1.5,
+                              },
+                            ]}
+                          >
+                            {productByProvider?.name}
+                          </Text>
+                        </View>
+                        <View style={[Gutters.smallTMargin]}>
+                          <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                              ColorText.fontWeight500,
+                              FontSizeResponsive.textSmall,
+                              {
+                                color: Colors.white,
+                                maxWidth: widthDimensions / 1.5,
+                              },
+                            ]}
+                          >
+                            {productByProvider?.description}
+                          </Text>
+                        </View>
+                        <View style={[Gutters.smallTMargin]}>
+                          <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                              ColorText.fontWeight500,
+                              FontSizeResponsive.textSmall,
+                              {
+                                color: Colors.primary,
+                                maxWidth: widthDimensions / 1.5,
+                              },
+                            ]}
+                          >
+                            {productByProvider?.actor}
+                          </Text>
+                        </View>
+                        <View style={[Gutters.smallTMargin]}>
+                          <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                              ColorText.fontWeight500,
+                              FontSizeResponsive.textSmall,
+                              {
+                                color: Colors.white,
+                                maxWidth: widthDimensions / 1.5,
+                              },
+                            ]}
+                          >
+                            {productByProvider?.category}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  })}
               </ScrollView>
             </View>
           </View>
-
-          <View style={[Gutters.smallTMargin]}>
-            <Text
-              style={[
-                ColorText.white,
-                ColorText.fontWeight500,
-                Gutters.smallBMargin,
-                FontSizeResponsive.textSmall,
-              ]}
-            >
-              List Movie
-            </Text>
-            <ScrollView horizontal showsHorizontalScrollIndicato={false}>
-              {Array.isArray(dataListProductByProvinder) &&
-                dataListProductByProvinder.map((productByProvider) => {
-                  return (
-                    <View
-                      style={styles.container}
-                      key={`listProvinder_${productByProvider?._id}`}
-                    >
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate("MOVIE_DETAILS", {
-                            productByProvider,
-                          })
-                        }
-                      >
-                        <Image
-                          style={[
-                            {
-                              height: 150,
-                              width: widthDimensions / 1.5,
-                              borderRadius: 8,
-                            },
-                          ]}
-                          source={{
-                            uri: `${baseApiUrlGetImage}${productByProvider.thumbnail}`,
-                          }}
-                        />
-                        <View style={styles.iconContainer}>
-                          <IconIonic
-                            name="play-circle-outline"
-                            size={35}
-                            color={Colors.white}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                      <View style={[Gutters.smallTMargin]}>
-                        <Text
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          style={[
-                            ColorText.fontWeight700,
-                            FontSizeResponsive.textSmall,
-                            {
-                              color: Colors.white,
-                              maxWidth: widthDimensions / 1.5,
-                            },
-                          ]}
-                        >
-                          {productByProvider?.name}
-                        </Text>
-                      </View>
-                      <View style={[Gutters.smallTMargin]}>
-                        <Text
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          style={[
-                            ColorText.fontWeight500,
-                            FontSizeResponsive.textSmall,
-                            {
-                              color: Colors.white,
-                              maxWidth: widthDimensions / 1.5,
-                            },
-                          ]}
-                        >
-                          {productByProvider?.description}
-                        </Text>
-                      </View>
-                      <View style={[Gutters.smallTMargin]}>
-                        <Text
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          style={[
-                            ColorText.fontWeight500,
-                            FontSizeResponsive.textSmall,
-                            {
-                              color: Colors.primary,
-                              maxWidth: widthDimensions / 1.5,
-                            },
-                          ]}
-                        >
-                          {productByProvider?.actor}
-                        </Text>
-                      </View>
-                      <View style={[Gutters.smallTMargin]}>
-                        <Text
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          style={[
-                            ColorText.fontWeight500,
-                            FontSizeResponsive.textSmall,
-                            {
-                              color: Colors.white,
-                              maxWidth: widthDimensions / 1.5,
-                            },
-                          ]}
-                        >
-                          {productByProvider?.category}
-                        </Text>
-                      </View>
-                    </View>
-                  );
-                })}
-            </ScrollView>
-          </View>
         </View>
-      </View>
+      )}
     </ScrollView>
   );
 };

@@ -3,7 +3,7 @@ import { getApi, postApi, getApiTransaction } from "./api";
 import { accountActions } from "./accountSlice";
 
 function* onGetListProviderByUser() {
-  const url = "get/favorite/";
+  const url = "regsevice/get";
   try {
     const response = yield call(getApi, url);
     console.log("response; ", response);

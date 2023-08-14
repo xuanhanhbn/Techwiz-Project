@@ -23,10 +23,12 @@ import { isLogin } from "@/Navigators/utils";
 import { postApiLogin, getApiUser } from "./api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import DeviceInfo from "react-native-device-info";
+import { useDispatch } from "react-redux";
+import { loginActions } from "./loginSlice";
 
 const LoginPage = ({ route }) => {
   const { Fonts, Gutters, Layout, ColorText } = useTheme();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   // const loginPageData = useSelector(makeSelectLogin);
   // const { errorMessage, loginData } = loginPageData;
@@ -77,9 +79,13 @@ const LoginPage = ({ route }) => {
     queryKey: ["getMe", accessToken],
     queryFn: async () => {
       const data = await getApiUser("/profile");
-      if (data) {
-        setUserInfo(data.data);
-        await EncryptedStorage.setItem("userInfo", JSON.stringify(data.data));
+      if (data && data.status === 200) {
+        setUserInfo(data.data.data);
+        await EncryptedStorage.setItem(
+          "userInfo",
+          JSON.stringify(data.data.data)
+        );
+        dispatch(loginActions.getUserInfoSuccess(data?.data?.data));
       }
     },
     enabled: false,

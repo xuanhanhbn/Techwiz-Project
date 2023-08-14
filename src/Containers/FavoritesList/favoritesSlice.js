@@ -19,7 +19,7 @@ const FavoritesSlice = createSlice({
     },
     getListFavoritesSuccess(state, action) {
       state.isLoading = false;
-      state.userInfo = action.payload || {};
+      state.dataFavorites = action.payload || {};
     },
     clear(state) {
       state.isDisableAccount = false;
