@@ -93,7 +93,6 @@ const User = ({ route }) => {
 
   useEffect(() => {
     if (isUpdateUserSuccess) {
-      console.log("2");
       dispatch(userActions.cleanup());
       dispatch(loginActions.getUserInfo());
       handleShowModal("generalAccountModal");

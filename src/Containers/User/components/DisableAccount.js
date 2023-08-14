@@ -31,7 +31,7 @@ import {
 import analytics from "@react-native-firebase/analytics";
 
 const schema = yup.object({
-  password: yup.string().required("Vui lòng nhập mật khẩu"),
+  password: yup.string().required("Please Enter Your Password"),
 });
 const DisableAccount = (props) => {
   const { onOpen, onClose, setIsShowAlert, isShowAlert } = props;

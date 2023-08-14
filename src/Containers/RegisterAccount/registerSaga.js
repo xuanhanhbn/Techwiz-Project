@@ -7,7 +7,6 @@ function* onRegister(data) {
   const url = "/sent-otp";
   try {
     const response = yield call(postApi, url, body);
-    console.log("res: ", response);
     if (response && response.status === 200) {
       yield put(registerActions.registerAccountSuccess(response.data));
     } else {

@@ -126,12 +126,10 @@ function* onSaveMovie(data) {
 }
 
 function* onFeedBackProvider(data) {
-  console.log("data: ", data);
   const { ...payload } = data?.payload;
   const url = `/feedback/create`;
   try {
     const response = yield call(postApi, url, payload);
-    console.log("response: ", response);
     if (response && response.data && response.status === 200) {
       yield put(
         listProductActions.onFeedBackProviderSuccess(response.data.data)

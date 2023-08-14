@@ -6,7 +6,6 @@ function* onGetListFavorites() {
   const url = "favorite/getFavorite";
   try {
     const response = yield call(getApi, url);
-    console.log("response; ", response);
     if (response?.status === 200) {
       yield put(favoritesActions.getListFavoritesSuccess(response.data));
     } else {

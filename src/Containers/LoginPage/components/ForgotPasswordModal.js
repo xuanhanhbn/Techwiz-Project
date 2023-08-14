@@ -43,7 +43,6 @@ const ForgotPasswordModal = (props) => {
   const loginData = useSelector(makeSelectLogin);
   const { isLoading, errorMessage, forgotPassword, checkCode, resetPassword } =
     loginData;
-  console.log("loginData: ", loginData);
 
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");

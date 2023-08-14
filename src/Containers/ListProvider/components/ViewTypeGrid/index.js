@@ -23,7 +23,6 @@ import { baseApiUrlGetImage } from "@/utils/constants";
 const width = Dimensions.get("window").width;
 const ViewTypeGrid = forwardRef((props, ref) => {
   const { value, handleRefresh, onLoadMoreData, isLoading } = props;
-  console.log("value: ", value);
   const navigation = useNavigation();
 
   const { Gutters, Layout, ColorText, Border, FontSize, Colors } = useTheme();
