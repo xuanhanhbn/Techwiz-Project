@@ -10,6 +10,7 @@ import {
   Pressable,
   Alert,
   ScrollView,
+  Linking,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@/Hooks";
@@ -36,6 +37,7 @@ import {
   makeSelectLogin,
 } from "@/Containers/LoginPage/loginSlice";
 import analytics from "@react-native-firebase/analytics";
+import { baseApiUrlGetImage } from "@/utils/constants";
 
 const Setting = () => {
   // const { t } = useTranslation();
@@ -359,6 +361,11 @@ const Setting = () => {
     return TouchIDIcon;
   };
 
+  const handleOpenUrlContact = () => {
+    const url = `${baseApiUrlGetImage}/contact`;
+    Linking.openURL(url);
+  };
+
   return (
     <View style={styles.wrapper}>
       <FlashMessage position="top" />
@@ -566,7 +573,7 @@ const Setting = () => {
                 styles.borderBottom,
                 Gutters.middleVPadding,
               ]}
-              onPress={() => navigation.navigate("POLICY", item)}
+              onPress={() => handleOpenUrlContact()}
               key={item.type}
             >
               <View style={Layout.rowHCenter}>

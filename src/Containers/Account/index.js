@@ -16,13 +16,15 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@/Hooks";
+import moment from "moment";
+
 import {
   loginActions,
   makeSelectLogin,
 } from "@/Containers/LoginPage/loginSlice";
 import IconFeather from "react-native-vector-icons/Feather";
 
-import { useToast } from "native-base";
+import { Divider, useToast } from "native-base";
 import Clipboard from "@react-native-clipboard/clipboard";
 import EncryptedStorage from "react-native-encrypted-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -37,7 +39,8 @@ import { baseApiUrlGetImage } from "@/utils/constants";
 const Account = ({ route }) => {
   // const { t } = useTranslation();
   const navigation = useNavigation();
-  const { Fonts, Gutters, Layout, Colors, ColorText } = useTheme();
+  const { Fonts, Gutters, Layout, Colors, ColorText, FontSizeResponsive } =
+    useTheme();
   const dispatch = useDispatch();
   const toast = useToast();
 
@@ -70,6 +73,10 @@ const Account = ({ route }) => {
     }, [])
   );
 
+  const handleChangeDetails = (data) => {
+    navigation.navigate("DETAILS_PRODUCT", { itemProvinder: data });
+  };
+
   useEffect(() => {
     if (errorMessage) {
       handleShowToast(errorMessage);
@@ -89,13 +96,13 @@ const Account = ({ route }) => {
             <Pressable
               onPress={() => navigation.goBack()}
               style={[
-                Gutters.middleBMargin,
-                Gutters.largeTMargin,
+                // Gutters.middleBMargin,
+                // Gutters.largeTMargin,
                 Gutters.middleLMargin,
                 styles.backButton,
               ]}
               hitSlop={{ bottom: 20, left: 20, right: 20, top: 20 }} // expand pham vi cua button
-            ></Pressable>
+            />
             <View style={[Gutters.regularHPadding]}>
               <View
                 style={[
@@ -108,7 +115,7 @@ const Account = ({ route }) => {
                   style={[
                     styles.topElements,
                     // styles.borderBottom,
-                    Gutters.regularBPadding,
+                    // Gutters.regularBPadding,
                   ]}
                 >
                   <Image
@@ -151,6 +158,7 @@ const Account = ({ route }) => {
                       <View style={styles.userName}>
                         <Text
                           numberOfLines={1}
+                          ellipsizeMode="tail"
                           style={[
                             Gutters.tinyTMargin,
                             {
@@ -171,50 +179,121 @@ const Account = ({ route }) => {
                   </View>
                 </View>
               </View>
+              <View style={[Gutters.regularTMargin]}>
+                <Text
+                  style={[
+                    FontSizeResponsive.textSmall,
+                    ColorText.fontWeight700,
+                    { color: Colors.white },
+                  ]}
+                >
+                  List Subcribe
+                </Text>
+              </View>
             </View>
             <ScrollView style={styles.scrollView}>
               {Array.isArray(globalData?.data) &&
                 globalData?.data?.length > 0 &&
                 globalData?.data.map((item) => {
+                  const startAt = item?.startAt?.format("DD/MM/YYYY");
+                  const expDate = item?.expDate?.format("DD/MM/YYYY");
+
                   return (
-                    <View
+                    <TouchableOpacity
                       key={item?._id}
-                      style={[
-                        Layout.rowHCenter,
-                        Gutters.regularHPadding,
-                        {
-                          backgroundColor: Colors.secondaryBackground,
-                          borderRadius: 8,
-                          marginTop: 10,
-                          justifyContent: "space-between",
-                        },
-                      ]}
+                      onPress={() => handleChangeDetails(item)}
                     >
-                      <View>
-                        <Image
-                          source={{
-                            uri: `${baseApiUrlGetImage}${item?.thumbnail}`,
-                          }}
-                          style={{
-                            width: widthDimensions / 3,
-                            height: 100,
+                      <View
+                        style={[
+                          Layout.rowHCenter,
+                          {
+                            backgroundColor: Colors.secondaryBackground,
                             borderRadius: 8,
-                          }}
-                          alt="avatar"
-                        />
+                            marginTop: 10,
+                            justifyContent: "space-between",
+                          },
+                        ]}
+                      >
+                        <View>
+                          <Image
+                            source={{
+                              uri: `${baseApiUrlGetImage}${item?.thumbnail}`,
+                            }}
+                            style={{
+                              width: widthDimensions / 3,
+                              height: 150,
+                              borderRadius: 8,
+                            }}
+                            alt="avatar"
+                          />
+                        </View>
+                        <View
+                          style={[
+                            Gutters.regularLPadding,
+                            Gutters.smallVPadding,
+                            Layout.fill,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              FontSizeResponsive.textSmall,
+                              { color: Colors.white },
+                            ]}
+                          >
+                            {item?.namePackage}
+                          </Text>
+                          <Text
+                            style={{ color: Colors.white }}
+                            numberOfLines={2}
+                            ellipsizeMode="tail"
+                          >
+                            {item?.description}
+                          </Text>
+                          <View
+                            style={[
+                              Layout.rowHCenter,
+                              { justifyContent: "space-between" },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                ColorText.fontWeight700,
+                                { color: Colors.primary },
+                              ]}
+                              numberOfLines={2}
+                              ellipsizeMode="tail"
+                            >
+                              {item?.name}
+                            </Text>
+                            <Text
+                              style={[
+                                FontSizeResponsive.textSmall,
+                                ColorText.fontWeight500,
+                                { color: Colors.white },
+                              ]}
+                              numberOfLines={2}
+                              ellipsizeMode="tail"
+                            >
+                              {`$ ${item?.price || 0} `}
+                            </Text>
+                          </View>
+                          <Divider my={2} />
+                          <View>
+                            <View style={[Layout.rowHCenter]}>
+                              <Text style={{ color: Colors.white }}>
+                                {`Start At: ${startAt || "-"}`}
+                              </Text>
+                            </View>
+                            <View style={[Layout.rowHCenter]}>
+                              <Text style={{ color: Colors.white }}>
+                                {`Expired At: ${expDate || "-"}`}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
                       </View>
-                      <View>
-                        <Text style={{ color: Colors.white }}>
-                          {item?.name}
-                        </Text>
-                        <Text style={{ color: Colors.white }}>
-                          {item?.description}
-                        </Text>
-                        <Text style={{ color: Colors.white }}>
-                          {item?.autor}
-                        </Text>
-                      </View>
-                    </View>
+                    </TouchableOpacity>
                   );
                 })}
             </ScrollView>

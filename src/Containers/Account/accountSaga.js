@@ -6,7 +6,6 @@ function* onGetListProviderByUser() {
   const url = "regsevice/get";
   try {
     const response = yield call(getApi, url);
-    console.log("response; ", response);
     if (response?.status === 200) {
       yield put(accountActions.getListProviderByUserSuccess(response.data));
     } else {
